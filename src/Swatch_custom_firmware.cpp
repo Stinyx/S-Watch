@@ -29,6 +29,8 @@ const char* ntpServer = "pool.ntp.org";
 #define DISPLAYHEIGHT 200
 
 unsigned long lastUpdate = 0;
+int lastConnectionUpdate = 0;
+int timeoutTimer = 0;
 
 enum WatchState {
   NTPSYNCING,
@@ -40,6 +42,7 @@ enum WatchState {
 };
 
 enum WatchState currentState;
+WatchState lastState = SETTINGS;
 
 void print_local_time() {   
   struct tm timeinfo;
@@ -88,12 +91,18 @@ void draw_time(){
   int minute = timeinfo.tm_min;
   int second = timeinfo.tm_sec;
 
-  display.setPartialWindow(10, 10, 180, 60);
+  int winX = 20;
+  int winY = 50;
+  int winW = 150;
+  int winH = 80;
+
+  display.setPartialWindow(winX, winY, winW, winH);
   display.firstPage();
   do {
-    display.fillRect(10,10,180,60,GxEPD_WHITE);
-    display.setCursor(10, 30);
-    display.printf("%02d:%02d:%02d", hour, minute, second);
+    display.fillRect(winX, winY, winW, winH, GxEPD_WHITE);
+    display.setCursor(winX + 20, winY + 60); 
+    //display.printf("%02d:%02d:%02d", hour, minute, second);
+    display.printf("%02d:%02d", hour, minute);
   } while (display.nextPage());
 
 }
@@ -154,15 +163,11 @@ void refresh_display(){
   } while (display.nextPage());
 }
 
-/*
-void buttonClick(Button2& b){
-
-}
-*/
+// BUTTON PRESSING LOGIC
 void buttonDoubleClick(Button2& b){
-  if(currentState != WEEZO && currentState != WEEZODRAWN){
+  if(currentState != WEEZO){
     currentState = WEEZO;
-  }else if(currentState == WEEZODRAWN){
+  }else if(currentState == WEEZO){
     refresh_display();
     currentState = CLOCK;
   }
@@ -189,44 +194,156 @@ void setup() {
 
   // Button2 setup (Input)
   button.begin(BUTTON_PIN, INPUT_PULLDOWN, false);
-  //button.setClickHandler(buttonClick);
   button.setLongClickHandler(buttonLongClick);
   button.setDoubleClickHandler(buttonDoubleClick);
 
-  // Serial communication setup for debug
-  Serial.begin(9600);
-
   // GxEPD setup (Drawing on screen)
-  display.init();
+  display.init(115200);
   display.setRotation(0);
   display.setFont(&FreeMonoBold9pt7b);
   display.setTextColor(GxEPD_BLACK);
   display.setFullWindow();
+
   // Refresh display once
   refresh_display();
 
-  // NTP lookup setup (Get current time)
+  // Draw WIFI Status message
+  display.setFullWindow();
+  display.firstPage();
+  do {
+    display.setCursor(0, 10);
+    display.println("CONNECTING");
+    display.println("TO WIFI...");
+  } while (display.nextPage());
+
+  //NTP and WIFI connection setup
+  unsigned long wifiStart = millis();
+  unsigned long lastDraw  = 0;
+  const unsigned long WIFI_TIMEOUT = 10000; 
+  int resultTextPosition = 60;
+  int resultTexPositionCursor = resultTextPosition + 25;
+
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {   
-     delay(500);
-     Serial.print(".");
-   }
-   Serial.println(" CONNECTED");
-   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);  
-   print_local_time();
-   WiFi.disconnect(true);   
-   WiFi.mode(WIFI_OFF);   
+
+  while (WiFi.status() != WL_CONNECTED) {
+
+    // Try to connect to wifi for 10s, else timeout and display error message
+    if (millis() - wifiStart > WIFI_TIMEOUT) {
+
+      display.setPartialWindow(0, resultTextPosition, 200, 100);
+      display.firstPage();
+      do {
+        display.setCursor(0, resultTexPositionCursor);
+        display.println("FAILED TO");
+        display.println("CONNECT TO");
+        display.println("WIFI!");
+      } while (display.nextPage());
+
+      delay(5000);
+      break; 
+    }
+
+    delay(200); 
+  }
+
+  struct tm timeinfo;
+  int retries = 0;  
+
+  // Display that wifi was connected
+  display.setPartialWindow(0, resultTextPosition, 200, 100);
+  display.firstPage();
+  do {
+    display.setCursor(0, resultTexPositionCursor);
+    display.println("WIFI");
+    display.println("CONNECTED");
+    display.println("SUCCESSFULLY!");
+  } while (display.nextPage());
+  delay(1000);
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+  // Display NTP Waiting status message
+  display.setFullWindow();
+  display.firstPage();
+  do {
+    display.fillScreen(GxEPD_WHITE);
+    display.setCursor(0, 10);
+    display.println("WAITING");
+    display.println("FOR NTP");
+    display.println("RESPONSE...");
+  } while (display.nextPage());
+
+  // Try to get NTP Data
+  while(!getLocalTime(&timeinfo) && retries < 10){
+      delay(1000);
+      retries++;
+  }
+
+  // Display if NTP was synced succesfully or not
+  if (retries == 10){
+    display.setPartialWindow(0, resultTextPosition, 200, 100);
+    display.firstPage();
+    do {
+      display.setCursor(0, resultTexPositionCursor);
+      display.println("FAILED TO");
+      display.println("GET NTP DATA!");
+    } while (display.nextPage());
+  } else {
+    display.setPartialWindow(0, resultTextPosition, 200, 100);
+    display.firstPage();
+    do {
+      display.setCursor(0, resultTexPositionCursor);
+      display.println("NTP TIME");
+      display.println("ACQUIRED");
+      display.println("SUCCESFULLY!");
+    } while (display.nextPage());
+  }
+  delay(2000);
+
+  // Disconnect wifi for power saving
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
 }
+
+void onStateEnter(WatchState state) {
+  // Reset text size
+  display.setTextSize(1);
+
+  switch(state) {
+
+    case CLOCK:
+      display.setTextSize(2);
+      draw_image(0, 0, 200, 200, clk_bg);
+      draw_time();
+      break;
+
+    case WEEZO:
+      draw_image(0, 0, 200, 200, weezo);  
+      break;
+
+    case NTPSYNCING:
+
+      refresh_display();
+      draw_text_partial("Syncing NTP...", 10, 50);
+      break;
+
+    default:
+      break;
+  }
+}
+
 
 void loop() {
   button.loop();
 
+  if (currentState != lastState) {
+    onStateEnter(currentState);
+    lastState = currentState;
+  }
+
   switch(currentState){
     case NTPSYNCING:
     {
-      refresh_display();
-      draw_text_partial("Syncing NTP...", 10, 50);
-
       struct tm oldTime;
       getLocalTime(&oldTime);
       String oldTimeStr = return_local_time_from_tm(oldTime);
@@ -254,18 +371,12 @@ void loop() {
       currentState = CLOCK;
       break;
     case CLOCK:
-      if(millis() - lastUpdate >= 1000){ 
+      if(millis() - lastUpdate >= 10000){ 
           draw_time();
           lastUpdate = millis();
       }
       break;
     case SETTINGS:
-      break;
-    case WEEZO:
-      draw_image(0, 0, 200, 200, weezo);
-      currentState = WEEZODRAWN;
-      break;
-    case WEEZODRAWN:
       break;
   }
 }
