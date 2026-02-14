@@ -31,7 +31,7 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 
 ## Wiring (Until PCB is made)
 
-**ESP32**        **E‑Ink Display**
+**ESP32**        **E‑Ink Display**  
 GPIO18  →    CLK  
 GPIO23  →    DIN  
 GPIO17  →    DC  
