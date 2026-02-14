@@ -32,13 +32,13 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 ## Wiring (Until PCB is made)
 
 **ESP32**        **E‑Ink Display**
-GPIO18  →    CLK
-GPIO23  →    DIN
-GPIO17  →    DC
-GPIO16  →    RST
-GPIO5   →    CS
-GND     →    GND
-3V3     →    VCC
+GPIO18  →    CLK  
+GPIO23  →    DIN  
+GPIO17  →    DC  
+GPIO16  →    RST  
+GPIO5   →    CS  
+GND     →    GND  
+3V3     →    VCC  
 
 
 
