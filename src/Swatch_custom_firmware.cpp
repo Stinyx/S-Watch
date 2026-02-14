@@ -17,6 +17,7 @@
 
 #define DISPLAYWIDTH 200
 #define DISPLAYHEIGHT 200
+#define FULLSCREEN 200
 
 // Input variables
 Button2 button;
@@ -30,16 +31,16 @@ const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 const char* ntpServer = "pool.ntp.org";
 
-// DEBUG SETTINGS
-const int startupProcedure = 1;
+// Debug settings for now until Settings are fully implemented
+const int startupProcedure = 0;
 const int currentClockStyle = 1; //0 is first
 
+// Timer variables
 unsigned long lastUpdate = 0;
 int lastConnectionUpdate = 0;
 int timeoutTimer = 0;
 
-
-
+// Watch state enum with all the possible states (state machine)
 enum WatchState {
   NTPSYNCING,
   NTPSYNCED,
@@ -49,6 +50,7 @@ enum WatchState {
   WEEZODRAWN,
 };
 
+// Digits with the missing ones deleted
 unsigned char* digitArray[10] = {
   digit0,
   digit1,
@@ -62,6 +64,7 @@ unsigned char* digitArray[10] = {
   digit9
 };
 
+// Digits with the missing ones having an outline
 unsigned char* digitArray2[10] = {
   digit0_1,
   digit1_1,
@@ -75,14 +78,17 @@ unsigned char* digitArray2[10] = {
   digit9_1
 };
 
+// Styles
 unsigned char** clockStyles[2] = {
   digitArray, 
   digitArray2
 };
 
+// Watch states
 enum WatchState currentState;
 WatchState lastState = SETTINGS;
 
+// Prints the local time into serial
 void print_local_time() {   
   struct tm timeinfo;
   if( !getLocalTime(&timeinfo) ) {   
@@ -92,6 +98,7 @@ void print_local_time() {
   Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");  
 }
 
+// Returns the local time in a formatted string
 String return_local_time() {
     struct tm timeinfo;
     if (!getLocalTime(&timeinfo)) return ""; 
@@ -102,22 +109,45 @@ String return_local_time() {
     return String(buf);
 }
 
+// Calculates and returns drift between two time structures
 long calculate_drift(struct tm oldTime, struct tm newTime){
     time_t oldTimestamp = mktime(&oldTime);
     time_t newTimestamp = mktime(&newTime);
     return newTimestamp - oldTimestamp;  // in seconds
 }
 
+// idk if this is used but there is another similar one im too far gone
 String return_local_time_from_tm(struct tm t){
   char buf[9];
   sprintf(buf, "%02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
   return String(buf);
 }
 
+// Draws a single 7-segment digit on the display
 void draw_digit(int x, int y, int digit, int style){
     display.drawXBitmap(x, y, clockStyles[style][digit], digit_width, digit_height, GxEPD_BLACK);
 }
 
+// Draws out the current date on screen
+void draw_date(){
+  struct tm timeinfo;  
+
+  int year   = timeinfo.tm_year + 1900;
+  int month  = timeinfo.tm_mon + 1;
+  int day    = timeinfo.tm_mday;
+
+  if( !getLocalTime(&timeinfo) ) { 
+    display.setPartialWindow(16, 175, 168, 50);
+    display.firstPage();
+    do {
+      display.setCursor(0, 0);
+      display.println("UNABLE TO GET DATE");
+    } while (display.nextPage());
+    return;
+  }
+}
+
+// Draws out the current time on screen
 void draw_time(){
   struct tm timeinfo;  
   char timeToString[4];
@@ -150,12 +180,6 @@ void draw_time(){
     return;
   }
 
-  /*
-  int year   = timeinfo.tm_year + 1900;
-  int month  = timeinfo.tm_mon + 1;
-  int day    = timeinfo.tm_mday;
-  */
-
   int hour   = timeinfo.tm_hour;
   int minute = timeinfo.tm_min;
   int second = timeinfo.tm_sec;
@@ -181,6 +205,7 @@ void draw_time(){
   } while (display.nextPage());
 }
 
+// Draws static text, maybe unused for now
 void draw_text_static(String text, int x, int y){
   display.firstPage();
   do {
@@ -190,6 +215,7 @@ void draw_text_static(String text, int x, int y){
 
 }
 
+// Draws changing text in a partial way, maybe unused idk
 void draw_text_partial(String text, int x, int y) {
   int16_t x1, y1;
   uint16_t w, h;
@@ -205,6 +231,7 @@ void draw_text_partial(String text, int x, int y) {
   } while (display.nextPage());
 }
 
+// Syncs the NTP data from a NTP server
 void sync_ntp(){
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);  
@@ -221,6 +248,7 @@ void sync_ntp(){
   WiFi.mode(WIFI_OFF);  
 }
 
+// Draws a white screen to avoid a full screen refresh but avoid ghosting a little
 void draw_blank(){
   display.setPartialWindow(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT);
   display.firstPage();
@@ -229,6 +257,7 @@ void draw_blank(){
   } while (display.nextPage());
 }
 
+// Refreshes display fully to avoid ghosting
 void refresh_display(){
   display.setFullWindow();
   display.firstPage();
@@ -237,20 +266,30 @@ void refresh_display(){
   } while (display.nextPage());
 }
 
-// BUTTON PRESSING LOGIC
+// Button logic for a single click (Weezo image haha get weezo'd)
 void buttonDoubleClick(Button2& b){
   if(currentState != WEEZO){
     currentState = WEEZO;
   }else if(currentState == WEEZO){
-    refresh_display();
     currentState = CLOCK;
   }
 }
 
+// Button logic for a triple click (Settings screen for now)
+void buttonTripleClick(Button2& b){
+  if(currentState != SETTINGS){
+    currentState = SETTINGS;
+  }else{
+    currentState = CLOCK;
+  }
+}
+
+// Button logic for a long click (NTP sync for now)
 void buttonLongClick(Button2& b){
   currentState = NTPSYNCING;
 }
 
+// Draws an image on screen
 void draw_image(int x, int y, int w, int h, const unsigned char* image){
   display.setFullWindow();
   display.firstPage();
@@ -261,7 +300,7 @@ void draw_image(int x, int y, int w, int h, const unsigned char* image){
 }
 
 
-
+// Basic arduino setup
 void setup() {
   // Set base state
   currentState = CLOCK;
@@ -270,6 +309,7 @@ void setup() {
   button.begin(BUTTON_PIN, INPUT_PULLDOWN, false);
   button.setLongClickHandler(buttonLongClick);
   button.setDoubleClickHandler(buttonDoubleClick);
+  button.setTripleClickHandler(buttonTripleClick);
 
   // GxEPD setup (Drawing on screen)
   display.init(115200);
@@ -278,7 +318,7 @@ void setup() {
   display.setTextColor(GxEPD_BLACK);
   display.setFullWindow();
 
-  // Refresh display once
+  // Refresh display once to avoid ghosting and apparently activate partial refresh
   refresh_display();
 
   if(startupProcedure){
@@ -347,12 +387,17 @@ void setup() {
       display.println("WAITING");
       display.println("FOR NTP");
       display.println("RESPONSE...\n");
-      display.printf("%d/%d", 1, 1);
     } while (display.nextPage());
 
     // Try to get NTP Data
     while(!getLocalTime(&timeinfo) && retries < 10){
         delay(1000);
+        display.setPartialWindow(0, 180, 200, 20);
+        display.firstPage();
+        do{
+          display.printf("%d/%d", retries, 10);
+        }while(display.nextPage());
+        
         retries++;
     }
 
@@ -383,26 +428,31 @@ void setup() {
   }
 }
 
+// If watchstate changes, do something only once
 void onStateEnter(WatchState state) {
-  // Reset text size
+  // Reset text size (AND MAYBE OTHER THINGS IN THE FUTURE)
   display.setTextSize(1);
-
+  refresh_display();
+  
   switch(state) {
 
     case CLOCK:
       display.setTextSize(2);
-      draw_image(0, 0, 200, 200, clk_bg);
+      draw_image(0, 0, FULLSCREEN, FULLSCREEN, clk_bg);
+      draw_date();
       draw_time();
       break;
 
     case WEEZO:
-      draw_image(0, 0, 200, 200, weezo);  
+      draw_image(0, 0, FULLSCREEN, FULLSCREEN, weezo);  
       break;
 
     case NTPSYNCING:
-
-      refresh_display();
       draw_text_partial("Syncing NTP...", 10, 50);
+      break;
+
+    case SETTINGS:
+      draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
       break;
 
     default:
@@ -410,7 +460,7 @@ void onStateEnter(WatchState state) {
   }
 }
 
-
+// Basic arduino loop
 void loop() {
   button.loop();
 
@@ -420,6 +470,7 @@ void loop() {
   }
 
   switch(currentState){
+    // THIS LOOKS SO FUCKING UGLY I GOTTA FIX THE SYNC_NTP SHIT FUNCTION WHATEVER
     case NTPSYNCING:
     {
       struct tm oldTime;
@@ -440,14 +491,13 @@ void loop() {
       draw_text_partial("Drift: " + String(drift) + "s", 10, 150);
 
       delay(5000);
-      refresh_display();
-
       currentState = NTPSYNCED;
       break;
     }
     case NTPSYNCED:
       currentState = CLOCK;
       break;
+    // THIS CLOCK FUNCTION ALSO LOOKS BAD SO I GOTTA MAKE IT LOOK BETTER
     case CLOCK:
       if(millis() - lastUpdate >= 10000){ 
           draw_time();
