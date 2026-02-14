@@ -5,10 +5,10 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 
 ## Hardware
 
-* Good Display - e-ink display 200x200px BW
+* [Good Display GDEY0154D67 1.54" 200x200 ePaper display](https://www.laskakit.cz/good-display-gdey0154d67-1-54--200x200-epaper-displej/)
+* [GeB LiPol Battery 503035 500mAh 3.7V JST-PH 2.0](https://www.laskakit.cz/baterie-li-po-3-7v-500mah-lipo/) (after i have PCB, usb-micro for now)
 * ESP32 microcontroller (for now, planning for a custom PCB)
-* 400 mAh LiPO Battery (integrated with the PCB)
-* (Custom PCB for easier construction and wiring)
+* (Custom PCB in the far far future)
 
 ## Features
 
@@ -43,10 +43,9 @@ GPIO5   →    CS
 GND     →    GND  
 3V3     →    VCC  
 
-### Button usage for now
+## Button usage for now
 
-Button 1 (GPIO33)
----
+### Button 1 (GPIO33)
 * Long press - Sync NTP data
 * Click - Nothing for now (select element in settings UI later)
 * Double click - Show YOU WEEZO image

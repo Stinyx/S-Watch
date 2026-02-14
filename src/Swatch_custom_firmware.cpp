@@ -32,7 +32,7 @@ const int daylightOffset_sec = 3600;
 const char* ntpServer = "pool.ntp.org";
 
 // Debug settings for now until Settings are fully implemented
-const int startupProcedure = 0;
+const int startupProcedure = 1;
 const int currentClockStyle = 1; //0 is first
 
 // Timer variables
