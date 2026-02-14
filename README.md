@@ -43,5 +43,40 @@ GPIO5   →    CS
 GND     →    GND  
 3V3     →    VCC  
 
+### Button usage for now
+
+Button 1 (GPIO33)
+---
+* Long press - Sync NTP data
+* Click - Nothing for now (select element in settings UI later)
+* Double click - Show YOU WEEZO image
+* Triple click - Settings menu (empty for now)
+
+for triple and double click, you click them again the same amount of times to go back to the clock  
+
+example usage in code as functions for Button2 callback set functions:
+
+~~~cpp
+void buttonDoubleClick(Button2& b){
+  if(currentState != WEEZO){
+    currentState = WEEZO;
+  }else if(currentState == WEEZO){
+    currentState = CLOCK;
+  }
+}
+
+void buttonTripleClick(Button2& b){
+  if(currentState != SETTINGS){
+    currentState = SETTINGS;
+  }else{
+    currentState = CLOCK;
+  }
+}
+
+void buttonLongClick(Button2& b){
+  currentState = NTPSYNCING;
+}
+~~~
+
 
 
