@@ -4,14 +4,12 @@ S2-Watch (Stinyx Smartwatch)
 Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch using basically the same components
 
 ## Hardware
------------
 
 * Good Display - e-ink display 200x200px BW
 * ESP32 microcontroller (for now, planning for a custom PCB)
 * 400 mAh LiPO Battery (integrated with the PCB)
 
 ## Features
------------
 
 * Automatic NTP synchronization upon watch boot
 * Manual NTP synchronization
@@ -21,7 +19,6 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 * Settings screen
 
 ## Technologies And Libraries 
------------------
 
 * `<Button2.h>` - watch input
 * `<GxEPD2_BW.h>` - e-ink display compatibility
@@ -33,7 +30,6 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 - All UI elements and art handmade by me in GIMP
 
 ## Wiring (Until PCB is made)
------------------------------------------------------
 
 **ESP32**        **E‑Ink Display**
 GPIO18  →    CLK
