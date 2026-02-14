@@ -16,7 +16,7 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 * Manual NTP synchronization
 * Multiple clock display styles
 * Multiple watch background styles
-* *YOU WEEZO* image (for now because of `**Mispul**`)
+* *YOU WEEZO* image (for now because of `Mispul`)
 * Settings screen - for changing UI and NTP Syncing, other settings soon
 * Clock screen - shows current date and time
 * External buttons mapped for changing screens and UI handling
