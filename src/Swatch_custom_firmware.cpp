@@ -11,7 +11,7 @@
 #include "Button2.h"
 #define BUTTON_PIN 33
 
-// NTP (Network Time Protocol)
+// Wifi + NTP (Network Time Protocol)
 #include <WiFi.h>
 #include "time.h"
 
@@ -132,19 +132,39 @@ void draw_digit(int x, int y, int digit, int style){
 void draw_date(){
   struct tm timeinfo;  
 
+  int winX = 16;
+  int winY = 122;
+  int winW = 168; 
+  int winH = 200 - winY - 15; 
+
   int year   = timeinfo.tm_year + 1900;
   int month  = timeinfo.tm_mon + 1;
   int day    = timeinfo.tm_mday;
 
+  display.setTextSize(1);
   if( !getLocalTime(&timeinfo) ) { 
-    display.setPartialWindow(16, 175, 168, 50);
+    display.setPartialWindow(winX , winY, winW, winH);
     display.firstPage();
     do {
-      display.setCursor(0, 0);
-      display.println("UNABLE TO GET DATE");
+      display.setCursor(winX, winY + 20);
+      display.println("DATE NOT FOUND");
     } while (display.nextPage());
     return;
+  }else{
+    display.setPartialWindow(winX , winY, winW, winH);
+    display.firstPage();
+    do {
+      display.setCursor(winX, winY + 20);
+      display.println(&timeinfo, "%A");
+      display.setCursor(winX, winY + 40);
+      display.println(&timeinfo, "%B %d");
+      display.setCursor(winX, winY + 60);
+      display.println(&timeinfo, "%Y");
+    } while (display.nextPage());
   }
+  
+
+
 }
 
 // Draws out the current time on screen
@@ -336,7 +356,6 @@ void setup() {
       display.setCursor(0, 10);
       display.println("CONNECTING");
       display.println("TO WIFI...\n");
-      display.printf("%d/%d", millis() - wifiStart, WIFI_TIMEOUT);
     } while (display.nextPage());
 
     WiFi.begin(ssid, password);
@@ -501,6 +520,8 @@ void loop() {
     case CLOCK:
       if(millis() - lastUpdate >= 10000){ 
           draw_time();
+          // DRAWING THE DATE IS UNOPTIMISED, MAKE IT DRAW ONLY WHEN IT CHANGES 
+          draw_date();
           lastUpdate = millis();
       }
       break;
