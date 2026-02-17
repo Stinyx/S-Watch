@@ -14,6 +14,7 @@
 // Wifi + NTP (Network Time Protocol)
 #include <WiFi.h>
 #include "time.h"
+#include "wificredentials.h"
 
 #define DISPLAYWIDTH 200
 #define DISPLAYHEIGHT 200
@@ -25,8 +26,7 @@ int state = 0;
 int drawn = 0;
 
 // NTP Variables
-const char* ssid = "TP-Link_26F7";
-const char* password = "10834312";
+
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 const char* ntpServer = "pool.ntp.org";
@@ -254,7 +254,7 @@ void draw_text_partial(String text, int x, int y) {
 // Syncs the NTP data from a NTP server
 void sync_ntp(){
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);  
+  WiFi.begin(HWIFISSID, HWIFIPSWD);  
 
   while (WiFi.status() != WL_CONNECTED) {   
     delay(500);
@@ -358,7 +358,7 @@ void setup() {
       display.println("TO WIFI...\n");
     } while (display.nextPage());
 
-    WiFi.begin(ssid, password);
+    WiFi.begin(HWIFISSID, HWIFIPSWD);
 
     while (WiFi.status() != WL_CONNECTED) {
 
@@ -463,7 +463,7 @@ void onStateEnter(WatchState state) {
       break;
 
     case WEEZO:
-      draw_image(0, 0, FULLSCREEN, FULLSCREEN, weezo);  
+      draw_image(0, 0, FULLSCREEN, FULLSCREEN, flowersakuralogo);  
       break;
 
     case NTPSYNCING:
