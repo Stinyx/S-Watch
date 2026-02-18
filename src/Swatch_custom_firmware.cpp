@@ -88,14 +88,24 @@ unsigned char** clockStyles[2] = {
 enum WatchState currentState;
 WatchState lastState = SETTINGS;
 
-// Prints the local time into serial
-void print_local_time() {   
-  struct tm timeinfo;
-  if( !getLocalTime(&timeinfo) ) {   
-    Serial.println("Unable to get time data");
-    return;
-  }
-  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");  
+template<typename... Funcs>
+void epdDraw(Funcs... funcs)
+{
+  display.firstPage();
+  do {
+    (funcs(), ...);   // calls all functions
+  } while (display.nextPage());
+}
+
+template<typename... Funcs>
+void epdDrawPartial(int x, int y, int w, int h, Funcs... funcs)
+{
+  display.setPartialWindow(x, y, w, h);
+
+  display.firstPage();
+  do {
+    (funcs(), ...);
+  } while (display.nextPage());
 }
 
 // Returns the local time in a formatted string
@@ -126,6 +136,28 @@ String return_local_time_from_tm(struct tm t){
 // Draws a single 7-segment digit on the display
 void draw_digit(int x, int y, int digit, int style){
     display.drawXBitmap(x, y, clockStyles[style][digit], digit_width, digit_height, GxEPD_BLACK);
+}
+
+// Draws text on screen (basically display.printf() but e-ink and dynamic with partial refresh)
+void draw_text(int x, int y, const char* fmt, ...)
+{
+  char buffer[128];   // adjust size if needed
+
+  // Build formatted string
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, sizeof(buffer), fmt, args);
+  va_end(args);
+
+  int16_t x1, y1;
+  uint16_t w, h;
+
+  display.getTextBounds(buffer, x, y, &x1, &y1, &w, &h);
+  display.setPartialWindow(x1, y1, w, h);
+
+  display.fillRect(x1, y1, w, h, GxEPD_WHITE);
+  display.setCursor(x, y);
+  display.print(buffer);
 }
 
 // Draws out the current date on screen
@@ -162,9 +194,6 @@ void draw_date(){
       display.println(&timeinfo, "%Y");
     } while (display.nextPage());
   }
-  
-
-
 }
 
 // Draws out the current time on screen
@@ -200,7 +229,7 @@ void draw_time(){
     return;
   }
 
-  int hour   = timeinfo.tm_hour;
+  int hour = timeinfo.tm_hour;
   int minute = timeinfo.tm_min;
   int second = timeinfo.tm_sec;
 
@@ -225,32 +254,6 @@ void draw_time(){
   } while (display.nextPage());
 }
 
-// Draws static text, maybe unused for now
-void draw_text_static(String text, int x, int y){
-  display.firstPage();
-  do {
-    display.setCursor(x, y);
-    display.printf("%s", text.c_str());
-  } while (display.nextPage());
-
-}
-
-// Draws changing text in a partial way, maybe unused idk
-void draw_text_partial(String text, int x, int y) {
-  int16_t x1, y1;
-  uint16_t w, h;
-
-  display.getTextBounds(text.c_str(), x, y, &x1, &y1, &w, &h);
-  display.setPartialWindow(x1, y1, w, h);
-  display.firstPage();
-
-  do {
-      display.fillRect(x1, y1, w, h, GxEPD_WHITE);
-      display.setCursor(x, y);
-      display.printf("%s", text.c_str());
-  } while (display.nextPage());
-}
-
 // Syncs the NTP data from a NTP server
 void sync_ntp(){
   WiFi.mode(WIFI_STA);
@@ -258,12 +261,9 @@ void sync_ntp(){
 
   while (WiFi.status() != WL_CONNECTED) {   
     delay(500);
-    Serial.print(".");
   }
 
-  Serial.println(" CONNECTED");
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);   
-  print_local_time();
   WiFi.disconnect(true);  
   WiFi.mode(WIFI_OFF);  
 }
@@ -272,18 +272,14 @@ void sync_ntp(){
 void draw_blank(){
   display.setPartialWindow(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT);
   display.firstPage();
-  do {
-    display.fillRect(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT, GxEPD_WHITE);
-  } while (display.nextPage());
+  display.fillRect(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT, GxEPD_WHITE);
 }
 
 // Refreshes display fully to avoid ghosting
 void refresh_display(){
   display.setFullWindow();
   display.firstPage();
-  do {
-    display.fillScreen(GxEPD_WHITE);
-  } while (display.nextPage());
+  display.fillScreen(GxEPD_WHITE);
 }
 
 // Button logic for a single click (Weezo image haha get weezo'd)
@@ -313,10 +309,10 @@ void buttonLongClick(Button2& b){
 void draw_image(int x, int y, int w, int h, const unsigned char* image){
   display.setFullWindow();
   display.firstPage();
-  do {
-    display.fillScreen(GxEPD_WHITE);
-    display.drawXBitmap(x, y, image, w, h, GxEPD_BLACK);
-  } while (display.nextPage());
+  epdDraw(
+    [&](){display.fillScreen(GxEPD_WHITE);},
+    [&](){display.drawXBitmap(x, y, image, w, h, GxEPD_BLACK);}
+  );
 }
 
 
@@ -348,15 +344,12 @@ void setup() {
     const unsigned long WIFI_TIMEOUT = 10000; 
     int resultTextPosition = 60;
     int resultTexPositionCursor = resultTextPosition + 25;
+    int topPadded = 10;
 
     // Draw WIFI Status message
-    display.setFullWindow();
-    display.firstPage();
-    do {
-      display.setCursor(0, 10);
-      display.println("CONNECTING");
-      display.println("TO WIFI...\n");
-    } while (display.nextPage());
+    epdDraw(
+      [&](){draw_text(0, topPadded, "CONNECTING TO\nLOCAL WIFI");}
+    );
 
     WiFi.begin(HWIFISSID, HWIFIPSWD);
 
@@ -364,15 +357,10 @@ void setup() {
 
       // Try to connect to wifi for 10s, else timeout and display error message
       if (millis() - wifiStart > WIFI_TIMEOUT) {
-
-        display.setPartialWindow(0, resultTextPosition, 200, 100);
-        display.firstPage();
-        do {
-          display.setCursor(0, resultTexPositionCursor);
-          display.println("FAILED TO");
-          display.println("CONNECT TO");
-          display.println("WIFI!");
-        } while (display.nextPage());
+        epdDraw(
+          [&](){draw_text(0, resultTexPositionCursor, "FAILED TO CONNECT\nTO WIFI!");},
+          refresh_display
+        );
 
         delay(5000);
         break; 
@@ -385,59 +373,34 @@ void setup() {
     int retries = 0;  
 
     // Display that wifi was connected
-    display.setPartialWindow(0, resultTextPosition, 200, 100);
-    display.firstPage();
-    do {
-      display.setCursor(0, resultTexPositionCursor);
-      display.println("WIFI");
-      display.println("CONNECTED");
-      display.println("SUCCESSFULLY!");
-    } while (display.nextPage());
-    delay(1000);
-
+    epdDraw(
+      [&](){draw_text(0, resultTexPositionCursor, "WIFI\nCONNECTED\nSUCCESFULLY!");},
+      [](){delay(1000);},
+      refresh_display
+    );
+    
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
     // Display NTP Waiting status message
-    display.setFullWindow();
-    display.firstPage();
-    do {
-      display.fillScreen(GxEPD_WHITE);
-      display.setCursor(0, 10);
-      display.println("WAITING");
-      display.println("FOR NTP");
-      display.println("RESPONSE...\n");
-    } while (display.nextPage());
+    epdDraw(
+      [&](){draw_text(0, topPadded, "WAITING FOR\nNTP RESPONSE...");}
+    );
 
     // Try to get NTP Data
     while(!getLocalTime(&timeinfo) && retries < 10){
         delay(1000);
-        display.setPartialWindow(0, 180, 200, 20);
-        display.firstPage();
-        do{
-          display.printf("%d/%d", retries, 10);
-        }while(display.nextPage());
-        
         retries++;
     }
 
     // Display if NTP was synced succesfully or not
     if (retries == 10){
-      display.setPartialWindow(0, resultTextPosition, 200, 100);
-      display.firstPage();
-      do {
-        display.setCursor(0, resultTexPositionCursor);
-        display.println("FAILED TO");
-        display.println("GET NTP DATA!");
-      } while (display.nextPage());
+      epdDraw(
+        [&](){draw_text(0, resultTexPositionCursor, "FAILED TO GET\nNTP DATA!");}
+      );
     } else {
-      display.setPartialWindow(0, resultTextPosition, 200, 100);
-      display.firstPage();
-      do {
-        display.setCursor(0, resultTexPositionCursor);
-        display.println("NTP TIME");
-        display.println("ACQUIRED");
-        display.println("SUCCESFULLY!");
-      } while (display.nextPage());
+      epdDraw(
+        [&](){draw_text(0, resultTexPositionCursor, "NPT DATA ACQUIRED\nSUCCESFULLY!");}
+      );
     }
     delay(2000);
 
@@ -467,7 +430,7 @@ void onStateEnter(WatchState state) {
       break;
 
     case NTPSYNCING:
-      draw_text_partial("Syncing NTP...", 10, 50);
+      draw_text(10, 50, "Syncing NTP...");
       break;
 
     case SETTINGS:
@@ -504,10 +467,13 @@ void loop() {
 
       long drift = calculate_drift(oldTime, newTime);
 
-      draw_blank();
-      draw_text_partial("Old: " + oldTimeStr, 10, 80);
-      draw_text_partial("New: " + newTimeStr, 10, 120);
-      draw_text_partial("Drift: " + String(drift) + "s", 10, 150);
+      
+      epdDraw(
+        draw_blank,
+        [&](){draw_text(10, 80, "Old: %s", oldTimeStr);},
+        [&](){draw_text(10, 120, "New: %s", newTimeStr);},
+        [&](){draw_text(10, 150, "Drift: %ss", String(drift));}
+      );
 
       delay(5000);
       currentState = NTPSYNCED;
@@ -519,9 +485,8 @@ void loop() {
     // THIS CLOCK FUNCTION ALSO LOOKS BAD SO I GOTTA MAKE IT LOOK BETTER
     case CLOCK:
       if(millis() - lastUpdate >= 10000){ 
-          draw_time();
           // DRAWING THE DATE IS UNOPTIMISED, MAKE IT DRAW ONLY WHEN IT CHANGES 
-          draw_date();
+          epdDraw(draw_time, draw_date);
           lastUpdate = millis();
       }
       break;
