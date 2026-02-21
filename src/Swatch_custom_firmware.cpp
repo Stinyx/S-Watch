@@ -4,6 +4,7 @@
 #include <Fonts/FreeMonoBold9pt7b.h>
 #include "GxEPD2_display_selection_new_style.h"
 #include "images.h"
+#include "clockfaces.h"
 
 #include <math.h>
 
@@ -26,14 +27,14 @@ int state = 0;
 int drawn = 0;
 
 // NTP Variables
-
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
 const char* ntpServer = "pool.ntp.org";
 
 // Debug settings for now until Settings are fully implemented
-const int startupProcedure = 1;
-const int currentClockStyle = 1; //0 is first
+const int startupProcedure = 1; // TRUE/FALSE
+const int currentClockStyle = 2; //0 is first, indexes in an array
+const int drawBackground = 1; // TRUE/FALSE
 
 // Timer variables
 unsigned long lastUpdate = 0;
@@ -48,40 +49,6 @@ enum WatchState {
   SETTINGS,
   WEEZO,
   WEEZODRAWN,
-};
-
-// Digits with the missing ones deleted
-unsigned char* digitArray[10] = {
-  digit0,
-  digit1,
-  digit2,
-  digit3,
-  digit4,
-  digit5,
-  digit6,
-  digit7,
-  digit8,
-  digit9
-};
-
-// Digits with the missing ones having an outline
-unsigned char* digitArray2[10] = {
-  digit0_1,
-  digit1_1,
-  digit2_1,
-  digit3_1,
-  digit4_1,
-  digit5_1,
-  digit6_1,
-  digit7_1,
-  digit8_1,
-  digit9_1
-};
-
-// Styles
-unsigned char** clockStyles[2] = {
-  digitArray, 
-  digitArray2
 };
 
 // Watch states
@@ -128,8 +95,8 @@ long calculate_drift(struct tm oldTime, struct tm newTime){
 
 // idk if this is used but there is another similar one im too far gone
 String return_local_time_from_tm(struct tm t){
-  char buf[9];
-  sprintf(buf, "%02d:%02d:%02d", t.tm_hour, t.tm_min, t.tm_sec);
+  char buf[30];
+  sprintf(buf, "%d.%d-%d/%02d:%02d:%02d", t.tm_mday, t.tm_mon + 1, t.tm_year + + 1900, t.tm_hour, t.tm_min, t.tm_sec);
   return String(buf);
 }
 
@@ -169,19 +136,20 @@ void draw_date(){
   int winW = 168; 
   int winH = 200 - winY - 15; 
 
-  int year   = timeinfo.tm_year + 1900;
-  int month  = timeinfo.tm_mon + 1;
-  int day    = timeinfo.tm_mday;
+  int year = timeinfo.tm_year + 1900;
+  int month = timeinfo.tm_mon + 1;
+  int day = timeinfo.tm_mday;
 
   display.setTextSize(1);
   if( !getLocalTime(&timeinfo) ) { 
-    display.setPartialWindow(winX , winY, winW, winH);
-    display.firstPage();
-    do {
-      display.setCursor(winX, winY + 20);
-      display.println("DATE NOT FOUND");
-    } while (display.nextPage());
+
+    epdDraw(
+      [&](){
+        draw_text(winX, winY + 20, "DATE NOT FOUND");
+      }
+    );
     return;
+
   }else{
     display.setPartialWindow(winX , winY, winW, winH);
     display.firstPage();
@@ -201,9 +169,9 @@ void draw_time(){
   struct tm timeinfo;  
   char timeToString[4];
 
-  int winX = 16;
+  int winX = 15;
   int winY = 50;
-  int winW = 168; 
+  int winW = 169; 
   int winH = digit_height; 
   int digitSpacing = 5;
 
@@ -333,6 +301,7 @@ void setup() {
   display.setFont(&FreeMonoBold9pt7b);
   display.setTextColor(GxEPD_BLACK);
   display.setFullWindow();
+  display.setTextSize(1);
 
   // Refresh display once to avoid ghosting and apparently activate partial refresh
   refresh_display();
@@ -342,13 +311,12 @@ void setup() {
     unsigned long wifiStart = millis();
     unsigned long lastDraw  = 0;
     const unsigned long WIFI_TIMEOUT = 10000; 
-    int resultTextPosition = 60;
-    int resultTexPositionCursor = resultTextPosition + 25;
-    int topPadded = 10;
+    int lineSpacing = 15;
+    int offset = 15;
 
     // Draw WIFI Status message
     epdDraw(
-      [&](){draw_text(0, topPadded, "CONNECTING TO\nLOCAL WIFI");}
+      [&](){draw_text(0, 10, "> CONNECTING TO\nLOCAL WIFI");}
     );
 
     WiFi.begin(HWIFISSID, HWIFIPSWD);
@@ -358,11 +326,12 @@ void setup() {
       // Try to connect to wifi for 10s, else timeout and display error message
       if (millis() - wifiStart > WIFI_TIMEOUT) {
         epdDraw(
-          [&](){draw_text(0, resultTexPositionCursor, "FAILED TO CONNECT\nTO WIFI!");},
-          refresh_display
+          [&](){
+            offset = lineSpacing * 3;
+            draw_text(0, offset, "> FAILED TO \nCONNECT TO\nLOCAL WIFI!");
+            delay(5000);
+          }
         );
-
-        delay(5000);
         break; 
       }
 
@@ -374,16 +343,20 @@ void setup() {
 
     // Display that wifi was connected
     epdDraw(
-      [&](){draw_text(0, resultTexPositionCursor, "WIFI\nCONNECTED\nSUCCESFULLY!");},
-      [](){delay(1000);},
-      refresh_display
+      [&](){
+        offset = lineSpacing * 3;
+        draw_text(0, offset, "> WIFI\nCONNECTED\nSUCCESFULLY!");
+        }
     );
     
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
     // Display NTP Waiting status message
     epdDraw(
-      [&](){draw_text(0, topPadded, "WAITING FOR\nNTP RESPONSE...");}
+      [&](){
+        offset = lineSpacing * 7;
+        draw_text(0, offset, "> WAITING FOR\nNTP RESPONSE...");
+      }
     );
 
     // Try to get NTP Data
@@ -395,11 +368,17 @@ void setup() {
     // Display if NTP was synced succesfully or not
     if (retries == 10){
       epdDraw(
-        [&](){draw_text(0, resultTexPositionCursor, "FAILED TO GET\nNTP DATA!");}
+        [&](){
+          offset = lineSpacing * 10;
+          draw_text(0, offset, "> FAILED TO GET\nNTP DATA!");
+        }
       );
     } else {
       epdDraw(
-        [&](){draw_text(0, resultTexPositionCursor, "NPT DATA ACQUIRED\nSUCCESFULLY!");}
+        [&](){
+          offset = lineSpacing * 10;
+          draw_text(0, offset, "> NPT DATA\nACQUIRED\nSUCCESFULLY!");
+        }
       );
     }
     delay(2000);
@@ -414,13 +393,16 @@ void setup() {
 void onStateEnter(WatchState state) {
   // Reset text size (AND MAYBE OTHER THINGS IN THE FUTURE)
   display.setTextSize(1);
-  refresh_display();
+  epdDraw(
+    refresh_display
+  );
+  
   
   switch(state) {
 
     case CLOCK:
       display.setTextSize(2);
-      draw_image(0, 0, FULLSCREEN, FULLSCREEN, clk_bg);
+      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, clk_bg);
       draw_date();
       draw_time();
       break;
@@ -430,11 +412,11 @@ void onStateEnter(WatchState state) {
       break;
 
     case NTPSYNCING:
-      draw_text(10, 50, "Syncing NTP...");
+
       break;
 
     case SETTINGS:
-      draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
+      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
       break;
 
     default:
@@ -455,6 +437,14 @@ void loop() {
     // THIS LOOKS SO FUCKING UGLY I GOTTA FIX THE SYNC_NTP SHIT FUNCTION WHATEVER
     case NTPSYNCING:
     {
+      display.setFullWindow();
+      display.setTextSize(1);
+      epdDraw(
+        [&](){
+          draw_text(0, 20, "Syncing NTP...");
+        }
+      );
+
       struct tm oldTime;
       getLocalTime(&oldTime);
       String oldTimeStr = return_local_time_from_tm(oldTime);
@@ -467,12 +457,20 @@ void loop() {
 
       long drift = calculate_drift(oldTime, newTime);
 
-      
-      epdDraw(
-        draw_blank,
-        [&](){draw_text(10, 80, "Old: %s", oldTimeStr);},
-        [&](){draw_text(10, 120, "New: %s", newTimeStr);},
-        [&](){draw_text(10, 150, "Drift: %ss", String(drift));}
+      display.setTextSize(1);
+      epdDrawPartial(0, 50, 200, 130, 
+        [&](){
+          display.setCursor(0, 70);
+          display.printf("Old: \n%s", oldTimeStr.c_str());
+        },
+        [&](){
+          display.setCursor(0, 120);
+          display.printf("New: \n%s", newTimeStr.c_str());
+        },
+        [&](){
+          display.setCursor(0,  170);
+          display.printf("Drift: %lds", drift);
+        }
       );
 
       delay(5000);
