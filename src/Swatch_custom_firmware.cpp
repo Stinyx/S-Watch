@@ -44,7 +44,6 @@ int timeoutTimer = 0;
 // Watch state enum with all the possible states (state machine)
 enum WatchState {
   NTPSYNCING,
-  NTPSYNCED,
   CLOCK,
   SETTINGS,
   WEEZO,
@@ -224,6 +223,18 @@ void draw_time(){
 
 // Syncs the NTP data from a NTP server
 void sync_ntp(){
+  struct tm oldTime;
+  getLocalTime(&oldTime);
+  String oldTimeStr = return_local_time_from_tm(oldTime);
+
+  display.setFullWindow();
+  display.setTextSize(1);
+  epdDraw(
+    [&](){
+      draw_text(0, 20, "Syncing NTP...");
+    }
+  );
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(HWIFISSID, HWIFIPSWD);  
 
@@ -231,9 +242,36 @@ void sync_ntp(){
     delay(500);
   }
 
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);   
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);  
+
+  struct tm newTime;
+  getLocalTime(&newTime);
+  String newTimeStr = return_local_time_from_tm(newTime);
+
+  long drift = calculate_drift(oldTime, newTime);
+
+  display.setTextSize(1);
+  epdDrawPartial(0, 50, 200, 130, 
+    [&](){
+      display.setCursor(0, 70);
+      display.printf("Old: \n%s", oldTimeStr.c_str());
+    },
+    [&](){
+      display.setCursor(0, 120);
+      display.printf("New: \n%s", newTimeStr.c_str());
+    },
+    [&](){
+      display.setCursor(0,  170);
+      display.printf("Drift: %lds", drift);
+    }
+  );
+
   WiFi.disconnect(true);  
   WiFi.mode(WIFI_OFF);  
+
+  delay(5000);
+
+  currentState = CLOCK;
 }
 
 // Draws a white screen to avoid a full screen refresh but avoid ghosting a little
@@ -411,10 +449,6 @@ void onStateEnter(WatchState state) {
       draw_image(0, 0, FULLSCREEN, FULLSCREEN, flowersakuralogo);  
       break;
 
-    case NTPSYNCING:
-
-      break;
-
     case SETTINGS:
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
       break;
@@ -434,52 +468,11 @@ void loop() {
   }
 
   switch(currentState){
-    // THIS LOOKS SO FUCKING UGLY I GOTTA FIX THE SYNC_NTP SHIT FUNCTION WHATEVER
     case NTPSYNCING:
     {
-      display.setFullWindow();
-      display.setTextSize(1);
-      epdDraw(
-        [&](){
-          draw_text(0, 20, "Syncing NTP...");
-        }
-      );
-
-      struct tm oldTime;
-      getLocalTime(&oldTime);
-      String oldTimeStr = return_local_time_from_tm(oldTime);
-
-      sync_ntp();  
-
-      struct tm newTime;
-      getLocalTime(&newTime);
-      String newTimeStr = return_local_time_from_tm(newTime);
-
-      long drift = calculate_drift(oldTime, newTime);
-
-      display.setTextSize(1);
-      epdDrawPartial(0, 50, 200, 130, 
-        [&](){
-          display.setCursor(0, 70);
-          display.printf("Old: \n%s", oldTimeStr.c_str());
-        },
-        [&](){
-          display.setCursor(0, 120);
-          display.printf("New: \n%s", newTimeStr.c_str());
-        },
-        [&](){
-          display.setCursor(0,  170);
-          display.printf("Drift: %lds", drift);
-        }
-      );
-
-      delay(5000);
-      currentState = NTPSYNCED;
+      sync_ntp();
       break;
     }
-    case NTPSYNCED:
-      currentState = CLOCK;
-      break;
     // THIS CLOCK FUNCTION ALSO LOOKS BAD SO I GOTTA MAKE IT LOOK BETTER
     case CLOCK:
       if(millis() - lastUpdate >= 10000){ 
