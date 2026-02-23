@@ -10,7 +10,9 @@
 
 // Button2 
 #include "Button2.h"
-#define BUTTON_PIN 33
+#define BUTTON_PIN1 33
+#define BUTTON_PIN2 32
+#define BUTTON_PIN3 35
 
 // Wifi + NTP (Network Time Protocol)
 #include <WiFi.h>
@@ -22,9 +24,9 @@
 #define FULLSCREEN 200
 
 // Input variables
-Button2 button;
-int state = 0;
-int drawn = 0;
+Button2 button1;
+Button2 button2;
+Button2 button3;
 
 // NTP Variables
 const long gmtOffset_sec = 3600;
@@ -53,6 +55,7 @@ enum WatchState {
 // Watch states
 enum WatchState currentState;
 WatchState lastState = SETTINGS;
+int state = 0;
 
 template<typename... Funcs>
 void epdDraw(Funcs... funcs)
@@ -328,10 +331,13 @@ void setup() {
   currentState = CLOCK;
 
   // Button2 setup (Input)
-  button.begin(BUTTON_PIN, INPUT_PULLDOWN, false);
-  button.setLongClickHandler(buttonLongClick);
-  button.setDoubleClickHandler(buttonDoubleClick);
-  button.setTripleClickHandler(buttonTripleClick);
+  button1.begin(BUTTON_PIN1, INPUT_PULLDOWN, false);
+  button2.begin(BUTTON_PIN2, INPUT_PULLDOWN, false);
+  button3.begin(BUTTON_PIN3, INPUT_PULLDOWN, false);
+
+  button1.setLongClickHandler(buttonLongClick);
+  button1.setDoubleClickHandler(buttonDoubleClick);
+  button1.setTripleClickHandler(buttonTripleClick);
 
   // GxEPD setup (Drawing on screen)
   display.init(115200);
@@ -460,7 +466,9 @@ void onStateEnter(WatchState state) {
 
 // Basic arduino loop
 void loop() {
-  button.loop();
+  button1.loop();
+  button2.loop();
+  button3.loop();
 
   if (currentState != lastState) {
     onStateEnter(currentState);
