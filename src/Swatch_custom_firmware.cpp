@@ -55,10 +55,17 @@ enum WatchState {
   ALARM,
 };
 
+char* settingsOptions[3] = {
+  "Sync NTP",
+  "Test",
+  "Test1"
+};
+
 // Watch states
 enum WatchState currentState;
 WatchState lastState = SETTINGS;
 int state = 0;
+int currentMenuSelected = 0;
 
 template<typename... Funcs>
 void epdDraw(Funcs... funcs)
@@ -130,6 +137,20 @@ void draw_text(int x, int y, const char* fmt, ...)
   display.fillRect(x1, y1, w, h, GxEPD_WHITE);
   display.setCursor(x, y);
   display.print(buffer);
+}
+
+void draw_settings(){
+  epdDrawPartial(15, 45, 150, 130,
+    [](){
+      int offset = 60;
+      int lineHeight = 20;
+      for(char* setting : settingsOptions){
+        display.setCursor(15, offset);
+        display.printf("%s", setting);
+        offset += lineHeight;
+      }
+    }
+  );
 }
 
 // Draws out the current date on screen
@@ -484,6 +505,7 @@ void onStateEnter(WatchState state) {
       break;
 
     case NAVIGATION:
+      currentMenuSelected = 0;
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, nav_bg);
       break;
 
@@ -518,6 +540,7 @@ void loop() {
       }
       break;
     case SETTINGS:
+      draw_settings();
       break;
   }
 }
