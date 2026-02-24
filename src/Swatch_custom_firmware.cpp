@@ -34,9 +34,9 @@ const int daylightOffset_sec = 3600;
 const char* ntpServer = "pool.ntp.org";
 
 // Debug settings for now until Settings are fully implemented
-const int startupProcedure = 1; // TRUE/FALSE
-const int currentClockStyle = 2; //0 is first, indexes in an array
-const int drawBackground = 1; // TRUE/FALSE
+const int startupProcedure = 1; // bool
+const int currentClockStyle = 1; //0 is first, indexes in an array  //0-7s //1-7sg //2-cs
+const int drawBackground = 1; // bool
 
 // Timer variables
 unsigned long lastUpdate = 0;
@@ -50,6 +50,9 @@ enum WatchState {
   SETTINGS,
   WEEZO,
   WEEZODRAWN,
+  NAVIGATION,
+  TIMER,
+  ALARM,
 };
 
 // Watch states
@@ -314,6 +317,12 @@ void buttonLongClick(Button2& b){
   currentState = NTPSYNCING;
 }
 
+void returnToHome(Button2& b){
+  if(currentState != CLOCK || currentState != NTPSYNCING){
+    currentState = CLOCK;
+  }
+}
+
 // Draws an image on screen
 void draw_image(int x, int y, int w, int h, const unsigned char* image){
   display.setFullWindow();
@@ -335,11 +344,18 @@ void setup() {
   button2.begin(BUTTON_PIN2, INPUT_PULLDOWN, false);
   button3.begin(BUTTON_PIN3, INPUT_PULLDOWN, false);
 
+  // TEMPORARY BUTTON LOGIC TESTING, SUBJECT TO CHANGE
   button1.setLongClickHandler(buttonLongClick);
   button1.setDoubleClickHandler(buttonDoubleClick);
   button1.setTripleClickHandler(buttonTripleClick);
 
-  // GxEPD setup (Drawing on screen)
+
+  button2.setLongClickHandler([](Button2& b){currentState = CLOCK;}); //returnToHome(), lambda now for ease of reading
+  button2.setClickHandler([](Button2& b){currentState = NAVIGATION;});
+  button2.setDoubleClickHandler([](Button2& b){currentState = TIMER;});
+  button2.setTripleClickHandler([](Button2& b){currentState = ALARM;});
+
+  // GxEPD setup (Drawing on e-ink screen)
   display.init(115200);
   display.setRotation(0);
   display.setFont(&FreeMonoBold9pt7b);
@@ -347,7 +363,7 @@ void setup() {
   display.setFullWindow();
   display.setTextSize(1);
 
-  // Refresh display once to avoid ghosting and apparently activate partial refresh
+  // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
   refresh_display();
 
   if(startupProcedure){
@@ -457,6 +473,18 @@ void onStateEnter(WatchState state) {
 
     case SETTINGS:
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
+      break;
+
+    case ALARM:
+      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, alm_bg);
+      break;
+
+    case TIMER:
+      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, tmr_bg);
+      break;
+
+    case NAVIGATION:
+      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, nav_bg);
       break;
 
     default:
