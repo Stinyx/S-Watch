@@ -7,6 +7,8 @@
 #include "clockfaces.h"
 
 #include <math.h>
+#include <functional>
+#include <vector>
 
 // Button2 
 #include "Button2.h"
@@ -55,11 +57,20 @@ enum WatchState {
   ALARM,
 };
 
-char* settingsOptions[3] = {
-  "Sync NTP",
-  "Test",
-  "Test1"
+class Setting {
+  private:
+    std::function<void()> action;
+
+  public:
+    Setting(std::function<void()> func, const char* desc) : action(func), description(desc) {}
+    const char* description;
+
+    void apply() {
+      action();
+    }
 };
+
+std::vector<Setting> settingsOptions;
 
 // Watch states
 enum WatchState currentState;
@@ -74,6 +85,10 @@ void epdDraw(Funcs... funcs)
   do {
     (funcs(), ...);   // calls all functions
   } while (display.nextPage());
+}
+
+void new_setting(const char* description, std::function<void()> function){
+  settingsOptions.push_back(Setting(function, description));
 }
 
 template<typename... Funcs>
@@ -143,10 +158,10 @@ void draw_settings(){
   epdDrawPartial(15, 45, 150, 130,
     [](){
       int offset = 60;
-      int lineHeight = 20;
-      for(char* setting : settingsOptions){
+      int lineHeight = 25;
+      for(const Setting& setting : settingsOptions){
         display.setCursor(15, offset);
-        display.printf("%s", setting);
+        display.printf("%s", setting.description);
         offset += lineHeight;
       }
     }
@@ -383,6 +398,9 @@ void setup() {
   display.setTextColor(GxEPD_BLACK);
   display.setFullWindow();
   display.setTextSize(1);
+
+  new_setting("Sync NTP", sync_ntp);
+  new_setting("TEST", [](){});
 
   // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
   refresh_display();
