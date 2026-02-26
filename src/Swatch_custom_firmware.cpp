@@ -37,8 +37,8 @@ const char* ntpServer = "pool.ntp.org";
 
 // Debug settings for now until Settings are fully implemented
 const int startupProcedure = 1; // bool
-const int currentClockStyle = 1; //0 is first, indexes in an array  //0-7s //1-7sg //2-cs
-const int drawBackground = 1; // bool
+int currentClockStyle = 1; //0 is first, indexes in an array  //0-7s //1-7sg //2-cs
+int drawBackground = 1; // bool
 
 // Timer variables
 unsigned long lastUpdate = 0;
@@ -62,8 +62,15 @@ class Setting {
     std::function<void()> action;
 
   public:
-    Setting(std::function<void()> func, const char* desc) : action(func), description(desc) {}
+    Setting(std::function<void()> func, const char* desc, bool scroll, int scrollOptions) : 
+    action(func), 
+    description(desc), 
+    scrollable(scroll),
+    scrollOptions(scrollOptions)
+    {}
     const char* description;
+    bool scrollable;
+    int scrollOptions;
 
     void apply() {
       action();
@@ -77,6 +84,7 @@ enum WatchState currentState;
 WatchState lastState = SETTINGS;
 int state = 0;
 int currentMenuSelected = 0;
+int lastMenuSelected = 0;
 
 template<typename... Funcs>
 void epdDraw(Funcs... funcs)
@@ -87,8 +95,8 @@ void epdDraw(Funcs... funcs)
   } while (display.nextPage());
 }
 
-void new_setting(const char* description, std::function<void()> function){
-  settingsOptions.push_back(Setting(function, description));
+void new_setting(const char* description, std::function<void()> function, bool scrollable, int scrollOptions){
+  settingsOptions.push_back(Setting(function, description, scrollable, scrollOptions));
 }
 
 template<typename... Funcs>
@@ -155,14 +163,24 @@ void draw_text(int x, int y, const char* fmt, ...)
 }
 
 void draw_settings(){
-  epdDrawPartial(15, 45, 150, 130,
+  epdDrawPartial(15, 45, 170, 145,
     [](){
       int offset = 60;
       int lineHeight = 25;
+      int i = 0;
       for(const Setting& setting : settingsOptions){
+
         display.setCursor(15, offset);
-        display.printf("%s", setting.description);
+        if(currentMenuSelected == i) display.printf(">%s", setting.description);
+        else display.printf("%s", setting.description);
+
+        if(setting.scrollable){
+          display.setCursor(155, offset);
+          display.printf("<%d>", setting.scrollOptions);
+        } 
+
         offset += lineHeight;
+        i++;
       }
     }
   );
@@ -382,12 +400,17 @@ void setup() {
 
   // TEMPORARY BUTTON LOGIC TESTING, SUBJECT TO CHANGE
   button1.setLongClickHandler(buttonLongClick);
+  button1.setClickHandler([](Button2& b){
+    if(currentState == SETTINGS && currentMenuSelected < settingsOptions.size() - 1) currentMenuSelected++;
+  });
   button1.setDoubleClickHandler(buttonDoubleClick);
   button1.setTripleClickHandler(buttonTripleClick);
 
 
   button2.setLongClickHandler([](Button2& b){currentState = CLOCK;}); //returnToHome(), lambda now for ease of reading
-  button2.setClickHandler([](Button2& b){currentState = NAVIGATION;});
+  button2.setClickHandler([](Button2& b){
+     if(currentState == SETTINGS && currentMenuSelected > 0) currentMenuSelected--;
+  });
   button2.setDoubleClickHandler([](Button2& b){currentState = TIMER;});
   button2.setTripleClickHandler([](Button2& b){currentState = ALARM;});
 
@@ -399,8 +422,13 @@ void setup() {
   display.setFullWindow();
   display.setTextSize(1);
 
-  new_setting("Sync NTP", sync_ntp);
-  new_setting("TEST", [](){});
+  // Setting initialisation
+  new_setting("Sync NTP", sync_ntp, false, NULL);
+  new_setting("Clock Style", [](){}, true, currentClockStyle);
+  new_setting("Draw BG", [](){}, true, drawBackground);
+  new_setting("TEST", [](){}, true, NULL);
+  new_setting("TEST2", [](){}, false, NULL);
+  new_setting("TEST3", [](){}, false, NULL);
 
   // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
   refresh_display();
@@ -512,6 +540,7 @@ void onStateEnter(WatchState state) {
 
     case SETTINGS:
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
+      draw_settings();
       break;
 
     case ALARM:
@@ -558,7 +587,11 @@ void loop() {
       }
       break;
     case SETTINGS:
-      draw_settings();
+      if (currentMenuSelected != lastMenuSelected) {
+        draw_settings();
+        lastMenuSelected = currentMenuSelected;
+      }
+      
       break;
   }
 }
