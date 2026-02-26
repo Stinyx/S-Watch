@@ -25,7 +25,7 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 * Timer - stopwatch functionality
 * Alarm - set up alarms
 * Navigation - Changing between timer, alarm, settings, etc.
-* (Maybe upcoming) logo image
+* (Maybe upcoming) Sakura logo image
 * *YOU WEEZO* image (for now because of `Mispul`) (easter egg?)
 
 ## Technologies And Libraries 
@@ -36,12 +36,12 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 * `<math.h>` - for easier calculations
 * `<time.h>` - to keep track of time
 
-- Written in `**C++**` in `**VSCode**` using `**PlatformIO**` for writing to the MCU
-- All UI elements and art handmade by me in `**GIMP**`
+- Written in `C++` in `VSCode` using `PlatformIO` for writing to the MCU
+- All UI elements and art handmade by me in `GIMP`
 
 ## Wiring (Until PCB is made)
 
-`**ESP32**`        `**E‑Ink Display**`  
+`ESP32`        `E‑Ink Display`  
 GPIO18  →    CLK  
 GPIO23  →    DIN  
 GPIO17  →    DC  
