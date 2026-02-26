@@ -14,12 +14,19 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 
 * Automatic NTP synchronization upon watch boot
 * Manual NTP synchronization
-* Multiple clock display styles
-* Multiple watch background styles
-* *YOU WEEZO* image (for now because of `Mispul`)
-* Settings screen - for changing UI and NTP Syncing, other settings soon
-* Clock screen - shows current date and time
+* Multiple clock display styles (currently 3 types)
+* Multiple watch background styles (eventually)
 * External buttons mapped for changing screens and UI handling
+
+## Integrated Menus/Screens
+
+* Clock - shows current date and time
+* Settings - for changing UI and NTP Syncing, other settings soon
+* Timer - stopwatch functionality
+* Alarm - set up alarms
+* Navigation - Changing between timer, alarm, settings, etc.
+* (Maybe upcoming) logo image
+* *YOU WEEZO* image (for now because of `Mispul`) (easter egg?)
 
 ## Technologies And Libraries 
 
@@ -29,12 +36,12 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 * `<math.h>` - for easier calculations
 * `<time.h>` - to keep track of time
 
-- Written in **C++** in **VSCode** using **PlatformIO** for writing to the MCU
-- All UI elements and art handmade by me in **GIMP**
+- Written in `**C++**` in `**VSCode**` using `**PlatformIO**` for writing to the MCU
+- All UI elements and art handmade by me in `**GIMP**`
 
 ## Wiring (Until PCB is made)
 
-**ESP32**        **E‑Ink Display**  
+`**ESP32**`        `**E‑Ink Display**`  
 GPIO18  →    CLK  
 GPIO23  →    DIN  
 GPIO17  →    DC  
@@ -43,7 +50,7 @@ GPIO5   →    CS
 GND     →    GND  
 3V3     →    VCC  
 
-## Button usage for now
+## Button usage for now (deprecated, subject to change frequently)
 
 ### Button 1 (GPIO33)
 * Long press - Sync NTP data
