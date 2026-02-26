@@ -20,11 +20,12 @@ Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch 
 
 ## Integrated Menus/Screens
 
-* Clock - shows current date and time
-* Settings - for changing UI and NTP Syncing, other settings soon
-* Timer - stopwatch functionality
-* Alarm - set up alarms
-* Navigation - Changing between timer, alarm, settings, etc.
+* **Clock** - shows current date and time
+* **Settings** - for changing UI and NTP Syncing, other settings soon
+* **Timer** - stopwatch functionality
+* **Alarm** - set up alarms
+* **Navigation** - Changing between timer, alarm, settings, etc.
+        
 * (Maybe upcoming) Sakura logo image
 * *YOU WEEZO* image (for now because of `Mispul`) (easter egg?)
 
