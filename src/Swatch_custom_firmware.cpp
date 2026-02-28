@@ -51,11 +51,11 @@ enum WatchState {
   NTPSYNCING,
   CLOCK,
   SETTINGS,
-  WEEZO,
-  WEEZODRAWN,
+  IMAGE,
   NAVIGATION,
   TIMER,
   ALARM,
+  ABOUT,
 };
 
 class Setting {
@@ -79,13 +79,18 @@ class Setting {
 };
 
 std::vector<Setting> settingsOptions;
+std::vector<Setting> navigationOptions;
 
 // Watch states
 enum WatchState currentState;
 WatchState lastState = SETTINGS;
 int state = 0;
+
 int currentMenuSelected = 0;
+int currentNavigationSelected = 0;
+
 int lastMenuSelected = 0;
+int lastNavigationSelected = 0;
 
 template<typename... Funcs>
 void epdDraw(Funcs... funcs)
@@ -98,6 +103,10 @@ void epdDraw(Funcs... funcs)
 
 void new_setting(const char* description, std::function<void()> function, bool scrollable, int *scrollOptions){
   settingsOptions.push_back(Setting(function, description, scrollable, scrollOptions));
+}
+
+void new_navigation(const char* description, std::function<void()> function){
+ navigationOptions.push_back(Setting(function, description, NULL, NULL));
 }
 
 template<typename... Funcs>
@@ -179,6 +188,25 @@ void draw_settings(){
           display.setCursor(155, offset);
           display.printf("<%d>", *setting.scrollOptions);
         } 
+
+        offset += lineHeight;
+        i++;
+      }
+    }
+  );
+}
+
+void draw_navigation(){
+  epdDrawPartial(15, 45, 170, 145,
+    [](){
+      int offset = 60;
+      int lineHeight = 25;
+      int i = 0;
+      for(const Setting& navigation : navigationOptions){
+
+        display.setCursor(15, offset);
+        if(currentMenuSelected == i) display.printf(">%s", navigation.description);
+        else display.printf("%s", navigation.description);
 
         offset += lineHeight;
         i++;
@@ -354,17 +382,8 @@ void sync_ntp(){
   currentState = CLOCK;
 }
 
-// Button logic for a single click (Weezo image haha get weezo'd)
-void buttonDoubleClick(Button2& b){
-  if(currentState != WEEZO){
-    currentState = WEEZO;
-  }else if(currentState == WEEZO){
-    currentState = CLOCK;
-  }
-}
-
 // Button logic for a triple click (Settings screen for now)
-void buttonTripleClick(Button2& b){
+void buttonTripleClick(){
   if(currentState != SETTINGS){
     currentState = SETTINGS;
   }else{
@@ -405,19 +424,23 @@ void button_handler_init(){
   button1.setLongClickHandler(buttonLongClick);
   button1.setClickHandler([](Button2& b){
     if(currentState == SETTINGS && currentMenuSelected < settingsOptions.size() - 1) currentMenuSelected++;
+    if(currentState == NAVIGATION && currentNavigationSelected < navigationOptions.size() - 1) currentNavigationSelected++;
   });
-  button1.setDoubleClickHandler(buttonDoubleClick);
-  button1.setTripleClickHandler(buttonTripleClick);
+  button1.setTripleClickHandler([](Button2& b){if(currentState != NTPSYNCING) buttonTripleClick();});
 
 
   button2.setLongClickHandler([](Button2& b){currentState = CLOCK;}); //returnToHome(), lambda now for ease of reading
   button2.setClickHandler([](Button2& b){
      if(currentState == SETTINGS && currentMenuSelected > 0) currentMenuSelected--;
+     if(currentState == NAVIGATION && currentNavigationSelected > 0) currentNavigationSelected--;
   });
 
   button2.setDoubleClickHandler([](Button2& b){
     if(currentState == SETTINGS) settingsOptions[currentMenuSelected].apply();
+    if(currentState == NAVIGATION) navigationOptions[currentNavigationSelected].apply();
   });
+
+  button3.setTripleClickHandler([](Button2& b){if(currentState != NTPSYNCING) currentState = NAVIGATION;});
 }
 
 // GxEPD setup (Drawing on e-ink screen)
@@ -432,7 +455,6 @@ void gxepd_init(){
 
 // Setting initialisation
 void settings_init(){
-  
   new_setting("Clock Style", [](){
     currentClockStyle++;
     if(currentClockStyle > 2) currentClockStyle = 0;
@@ -454,6 +476,13 @@ void settings_init(){
 
   new_setting("TEST2", [](){}, false, NULL);
   new_setting("TEST3", [](){}, false, NULL);
+}
+
+void navigation_init(){
+  new_navigation("Timer", [](){currentState = TIMER;});
+  new_navigation("Image", [](){currentState = IMAGE;});
+  new_navigation("Alarm", [](){currentState = ALARM;});
+  new_navigation("About", [](){currentState = ABOUT;});
 }
 
 
@@ -566,7 +595,7 @@ void onStateEnter(WatchState state) {
       draw_time();
       break;
 
-    case WEEZO:
+    case IMAGE:
       draw_image(0, 0, FULLSCREEN, FULLSCREEN, flowersakuralogo);  
       break;
 
