@@ -39,6 +39,7 @@ const char* ntpServer = "pool.ntp.org";
 const int startupProcedure = 1; // bool
 int currentClockStyle = 1; //0 is first, indexes in an array  //0-7s //1-7sg //2-cs
 int drawBackground = 1; // bool
+int drawDate = 1;
 
 // Timer variables
 unsigned long lastUpdate = 0;
@@ -62,7 +63,7 @@ class Setting {
     std::function<void()> action;
 
   public:
-    Setting(std::function<void()> func, const char* desc, bool scroll, int scrollOptions) : 
+    Setting(std::function<void()> func, const char* desc, bool scroll, int *scrollOptions) : 
     action(func), 
     description(desc), 
     scrollable(scroll),
@@ -70,7 +71,7 @@ class Setting {
     {}
     const char* description;
     bool scrollable;
-    int scrollOptions;
+    int *scrollOptions;
 
     void apply() {
       action();
@@ -95,7 +96,7 @@ void epdDraw(Funcs... funcs)
   } while (display.nextPage());
 }
 
-void new_setting(const char* description, std::function<void()> function, bool scrollable, int scrollOptions){
+void new_setting(const char* description, std::function<void()> function, bool scrollable, int *scrollOptions){
   settingsOptions.push_back(Setting(function, description, scrollable, scrollOptions));
 }
 
@@ -174,9 +175,9 @@ void draw_settings(){
         if(currentMenuSelected == i) display.printf(">%s", setting.description);
         else display.printf("%s", setting.description);
 
-        if(setting.scrollable){
+        if(setting.scrollable && setting.scrollOptions != NULL){
           display.setCursor(155, offset);
-          display.printf("<%d>", setting.scrollOptions);
+          display.printf("<%d>", *setting.scrollOptions);
         } 
 
         offset += lineHeight;
@@ -281,8 +282,27 @@ void draw_time(){
   } while (display.nextPage());
 }
 
+// Draws a white screen to avoid a full screen refresh but avoid ghosting a little
+void draw_blank(){
+  display.setPartialWindow(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT);
+  display.firstPage();
+  display.fillRect(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT, GxEPD_WHITE);
+}
+
+// Refreshes display fully to avoid ghosting
+void refresh_display(){
+  display.setFullWindow();
+  epdDraw(
+    [](){display.fillScreen(GxEPD_WHITE);}
+  );
+}
+
 // Syncs the NTP data from a NTP server
 void sync_ntp(){
+  epdDraw(
+    draw_blank
+  );
+
   struct tm oldTime;
   getLocalTime(&oldTime);
   String oldTimeStr = return_local_time_from_tm(oldTime);
@@ -334,20 +354,6 @@ void sync_ntp(){
   currentState = CLOCK;
 }
 
-// Draws a white screen to avoid a full screen refresh but avoid ghosting a little
-void draw_blank(){
-  display.setPartialWindow(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT);
-  display.firstPage();
-  display.fillRect(0, 0, DISPLAYWIDTH, DISPLAYHEIGHT, GxEPD_WHITE);
-}
-
-// Refreshes display fully to avoid ghosting
-void refresh_display(){
-  display.setFullWindow();
-  display.firstPage();
-  display.fillScreen(GxEPD_WHITE);
-}
-
 // Button logic for a single click (Weezo image haha get weezo'd)
 void buttonDoubleClick(Button2& b){
   if(currentState != WEEZO){
@@ -387,18 +393,15 @@ void draw_image(int x, int y, int w, int h, const unsigned char* image){
   );
 }
 
-
-// Basic arduino setup
-void setup() {
-  // Set base state
-  currentState = CLOCK;
-
-  // Button2 setup (Input)
+// Button2 setup (Input)
+void button_init(){ 
   button1.begin(BUTTON_PIN1, INPUT_PULLDOWN, false);
   button2.begin(BUTTON_PIN2, INPUT_PULLDOWN, false);
   button3.begin(BUTTON_PIN3, INPUT_PULLDOWN, false);
+}
 
-  // TEMPORARY BUTTON LOGIC TESTING, SUBJECT TO CHANGE
+// TEMPORARY BUTTON LOGIC TESTING, SUBJECT TO CHANGE
+void button_handler_init(){ 
   button1.setLongClickHandler(buttonLongClick);
   button1.setClickHandler([](Button2& b){
     if(currentState == SETTINGS && currentMenuSelected < settingsOptions.size() - 1) currentMenuSelected++;
@@ -411,28 +414,60 @@ void setup() {
   button2.setClickHandler([](Button2& b){
      if(currentState == SETTINGS && currentMenuSelected > 0) currentMenuSelected--;
   });
-  button2.setDoubleClickHandler([](Button2& b){currentState = TIMER;});
-  button2.setTripleClickHandler([](Button2& b){currentState = ALARM;});
 
-  // GxEPD setup (Drawing on e-ink screen)
+  button2.setDoubleClickHandler([](Button2& b){
+    if(currentState == SETTINGS) settingsOptions[currentMenuSelected].apply();
+  });
+}
+
+// GxEPD setup (Drawing on e-ink screen)
+void gxepd_init(){  
   display.init(115200);
   display.setRotation(0);
   display.setFont(&FreeMonoBold9pt7b);
   display.setTextColor(GxEPD_BLACK);
   display.setFullWindow();
   display.setTextSize(1);
+}
 
-  // Setting initialisation
+// Setting initialisation
+void settings_init(){
+  
+  new_setting("Clock Style", [](){
+    currentClockStyle++;
+    if(currentClockStyle > 2) currentClockStyle = 0;
+    draw_settings();
+  }, true, &currentClockStyle);
+
+  new_setting("Draw BG", [](){
+    drawBackground = !drawBackground;
+    draw_settings();
+  }, true, &drawBackground);
+
+  new_setting("Draw Date", [](){
+    drawDate = !drawDate;
+    draw_settings();
+  }, true, &drawDate);
+
+  // Only ones that dont have options and are just toggle basically
   new_setting("Sync NTP", sync_ntp, false, NULL);
-  new_setting("Clock Style", [](){}, true, currentClockStyle);
-  new_setting("Draw BG", [](){}, true, drawBackground);
-  new_setting("TEST", [](){}, true, NULL);
+
   new_setting("TEST2", [](){}, false, NULL);
   new_setting("TEST3", [](){}, false, NULL);
+}
 
-  // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
-  refresh_display();
 
+// Basic arduino setup
+void setup() {
+  // Set base state
+  currentState = CLOCK;
+
+  button_init();
+  button_handler_init();
+  gxepd_init();
+  settings_init();
+  refresh_display(); // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
+  
   if(startupProcedure){
     //NTP and WIFI connection setup
     unsigned long wifiStart = millis();
@@ -520,17 +555,14 @@ void setup() {
 void onStateEnter(WatchState state) {
   // Reset text size (AND MAYBE OTHER THINGS IN THE FUTURE)
   display.setTextSize(1);
-  epdDraw(
-    refresh_display
-  );
-  
-  
+  refresh_display();
+
   switch(state) {
 
     case CLOCK:
       display.setTextSize(2);
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, clk_bg);
-      draw_date();
+      if(drawDate) draw_date();
       draw_time();
       break;
 
@@ -582,7 +614,10 @@ void loop() {
     case CLOCK:
       if(millis() - lastUpdate >= 10000){ 
           // DRAWING THE DATE IS UNOPTIMISED, MAKE IT DRAW ONLY WHEN IT CHANGES 
-          epdDraw(draw_time, draw_date);
+          epdDraw(
+            draw_time, 
+            [](){if(drawDate) draw_date();}
+          );
           lastUpdate = millis();
       }
       break;
