@@ -205,7 +205,7 @@ void draw_navigation(){
       for(const Setting& navigation : navigationOptions){
 
         display.setCursor(15, offset);
-        if(currentMenuSelected == i) display.printf(">%s", navigation.description);
+        if(currentNavigationSelected == i) display.printf(">%s", navigation.description);
         else display.printf("%s", navigation.description);
 
         offset += lineHeight;
@@ -424,7 +424,7 @@ void button_handler_init(){
   button1.setLongClickHandler(buttonLongClick);
   button1.setClickHandler([](Button2& b){
     if(currentState == SETTINGS && currentMenuSelected < settingsOptions.size() - 1) currentMenuSelected++;
-    if(currentState == NAVIGATION && currentNavigationSelected < navigationOptions.size() - 1) currentNavigationSelected++;
+    else if(currentState == NAVIGATION && currentNavigationSelected < navigationOptions.size() - 1) currentNavigationSelected++;
   });
   button1.setTripleClickHandler([](Button2& b){if(currentState != NTPSYNCING) buttonTripleClick();});
 
@@ -432,12 +432,12 @@ void button_handler_init(){
   button2.setLongClickHandler([](Button2& b){currentState = CLOCK;}); //returnToHome(), lambda now for ease of reading
   button2.setClickHandler([](Button2& b){
      if(currentState == SETTINGS && currentMenuSelected > 0) currentMenuSelected--;
-     if(currentState == NAVIGATION && currentNavigationSelected > 0) currentNavigationSelected--;
+     else if(currentState == NAVIGATION && currentNavigationSelected > 0) currentNavigationSelected--;
   });
 
   button2.setDoubleClickHandler([](Button2& b){
     if(currentState == SETTINGS) settingsOptions[currentMenuSelected].apply();
-    if(currentState == NAVIGATION) navigationOptions[currentNavigationSelected].apply();
+    else if(currentState == NAVIGATION) navigationOptions[currentNavigationSelected].apply();
   });
 
   button3.setTripleClickHandler([](Button2& b){if(currentState != NTPSYNCING) currentState = NAVIGATION;});
@@ -495,6 +495,7 @@ void setup() {
   button_handler_init();
   gxepd_init();
   settings_init();
+  navigation_init();
   refresh_display(); // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
   
   if(startupProcedure){
@@ -600,6 +601,7 @@ void onStateEnter(WatchState state) {
       break;
 
     case SETTINGS:
+      currentMenuSelected = 0;
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
       draw_settings();
       break;
@@ -613,8 +615,9 @@ void onStateEnter(WatchState state) {
       break;
 
     case NAVIGATION:
-      currentMenuSelected = 0;
+      currentNavigationSelected = 0;
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, nav_bg);
+      draw_navigation();
       break;
 
     default:
@@ -633,29 +636,38 @@ void loop() {
     lastState = currentState;
   }
 
-  switch(currentState){
+  switch (currentState) {
+
     case NTPSYNCING:
-    {
       sync_ntp();
       break;
-    }
-    // THIS CLOCK FUNCTION ALSO LOOKS BAD SO I GOTTA MAKE IT LOOK BETTER
+
     case CLOCK:
-      if(millis() - lastUpdate >= 10000){ 
-          // DRAWING THE DATE IS UNOPTIMISED, MAKE IT DRAW ONLY WHEN IT CHANGES 
-          epdDraw(
-            draw_time, 
-            [](){if(drawDate) draw_date();}
-          );
-          lastUpdate = millis();
+      if (millis() - lastUpdate >= 10000) { 
+        epdDraw(
+          draw_time,
+          [&]() {
+            if (drawDate) draw_date();
+          }
+        );
+
+        lastUpdate = millis();
       }
       break;
+
     case SETTINGS:
       if (currentMenuSelected != lastMenuSelected) {
         draw_settings();
         lastMenuSelected = currentMenuSelected;
       }
-      
+      break;
+
+    case NAVIGATION:
+      if (currentNavigationSelected != lastNavigationSelected) {
+        draw_navigation();
+        lastNavigationSelected = currentNavigationSelected;
+      }
       break;
   }
 }
+
