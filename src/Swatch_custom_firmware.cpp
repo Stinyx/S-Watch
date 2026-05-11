@@ -218,7 +218,7 @@ void draw_navigation(){
 void draw_about(){
   epdDrawPartial(20, 45, 170, 145,
     [](){
-      draw_text(0, 55, "uhh, hello\nI'm Stinyx\nhmm, smartwatch");
+      draw_text(20, 55, "made by Stinyx\n uptime: (todo)\nversion: (todo)");
     }
   );
 };
