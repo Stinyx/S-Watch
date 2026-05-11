@@ -215,6 +215,14 @@ void draw_navigation(){
   );
 }
 
+void draw_about(){
+  epdDrawPartial(20, 45, 170, 145,
+    [](){
+      draw_text(0, 55, "uhh, hello\nI'm Stinyx\nhmm, smartwatch");
+    }
+  );
+};
+
 // Draws out the current date on screen
 void draw_date(){
   struct tm timeinfo;  
@@ -618,6 +626,11 @@ void onStateEnter(WatchState state) {
       currentNavigationSelected = 0;
       if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, nav_bg);
       draw_navigation();
+      break;
+
+    case ABOUT:
+      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, abt_bg);
+      draw_about();
       break;
 
     default:
