@@ -86,5 +86,12 @@ void buttonLongClick(Button2& b){
 }
 ~~~
 
+## TODO (Future reference for code or hardware)
+* Refactor code into multiple files
+* Timer
+* Stopwatch
+* Start designing PCB
+* Redo the startup procedure
+
 
 
