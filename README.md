@@ -92,6 +92,11 @@ void buttonLongClick(Button2& b){
 * Stopwatch
 * Start designing PCB
 * Redo the startup procedure
+* More customization and easier custom screens
+* Battery percentage indicator
+* Amount of steps
+* Current weather
+* Wifi indicator
 
 
 
