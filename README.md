@@ -1,7 +1,7 @@
 S2-Watch (Stinyx Smartwatch)
 ============================
 
-Simple open-source E-ink based watch on the ESP32, inspired by the Watchy watch using basically the same components
+Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch](https://watchy.sqfmi.com/) using basically the same components
 
 ## Hardware
 
