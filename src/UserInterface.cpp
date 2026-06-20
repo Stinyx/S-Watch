@@ -153,6 +153,15 @@ void draw_time(){
   int hour = timeinfo.tm_hour;
   int minute = timeinfo.tm_min;
   int second = timeinfo.tm_sec;
+  const char* ampm = (timeinfo.tm_hour >= 12) ? "PM" : "AM";
+
+  if (militaryTime == 0) {
+    if (hour == 0) {
+        hour = 12;      // Midnight -> 12 AM
+    } else if (hour > 12) {
+        hour -= 12;     // 13-23 -> 1-11 PM
+    }
+  }
 
   sprintf(timeToString, "%02d%02d", hour, minute); 
 

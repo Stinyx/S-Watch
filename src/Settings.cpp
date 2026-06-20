@@ -57,10 +57,15 @@ void settings_init(){
     draw_settings();
   }, true, &drawDate);
 
+  new_setting("Military", [](){
+    militaryTime = !militaryTime;
+    draw_settings();
+  }, true, &militaryTime);
+
   // Only ones that dont have options and are just toggle basically
   new_setting("Sync NTP", sync_ntp, false, NULL);
 
-  new_setting("TEST2", [](){}, false, NULL);
+
   new_setting("TEST3", [](){}, false, NULL);
 }
 
