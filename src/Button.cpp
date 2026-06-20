@@ -37,6 +37,7 @@ void button_init(){
 
 // TEMPORARY BUTTON LOGIC TESTING, SUBJECT TO CHANGE
 void button_handler_init(){ 
+  //Button 1 logic
   button1.setLongClickHandler(buttonLongClick);
   button1.setClickHandler([](Button2& b){
     if(currentState == SETTINGS && currentMenuSelected < settingsOptions.size() - 1) currentMenuSelected++;
@@ -44,18 +45,18 @@ void button_handler_init(){
   });
   button1.setTripleClickHandler([](Button2& b){if(currentState != NTPSYNCING) buttonTripleClick();});
 
-
+  //Button 2 logic
   button2.setLongClickHandler([](Button2& b){currentState = CLOCK;}); //returnToHome(), lambda now for ease of reading
   button2.setClickHandler([](Button2& b){
      if(currentState == SETTINGS && currentMenuSelected > 0) currentMenuSelected--;
      else if(currentState == NAVIGATION && currentNavigationSelected > 0) currentNavigationSelected--;
   });
-
   button2.setDoubleClickHandler([](Button2& b){
     if(currentState == SETTINGS) settingsOptions[currentMenuSelected].apply();
     else if(currentState == NAVIGATION) navigationOptions[currentNavigationSelected].apply();
   });
 
+  //Button 3 logic
   button3.setTripleClickHandler([](Button2& b){if(currentState != NTPSYNCING) currentState = NAVIGATION;});
 }
 

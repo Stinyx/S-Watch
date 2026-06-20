@@ -1,10 +1,4 @@
-#include <math.h>
-#include <functional>
-#include <vector>
 #include <WiFi.h>
-
-// Wifi + NTP (Network Time Protocol)
-
 #include "Settings.h"
 #include "Debug.h"
 #include "Button.h"
@@ -12,6 +6,7 @@
 #include "TimeManager.h"
 #include "UserInterface.h"
 #include "wificredentials.h"
+#include "Init.h"
 
 // Timer variables
 unsigned long lastUpdate = 0;
@@ -81,13 +76,8 @@ void setup() {
   // Set base state
   currentState = CLOCK;
 
-  button_init();
-  button_handler_init();
-  gxepd_init();
-  settings_init();
-  navigation_init();
-  refresh_display(); // Refresh display once to avoid ghosting and "APPARENTLY" activate partial refresh
-  
+  Init();
+
   if(startupProcedure){
     //NTP and WIFI connection setup
     unsigned long wifiStart = millis();

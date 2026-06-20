@@ -87,7 +87,7 @@ void buttonLongClick(Button2& b){
 ~~~
 
 ## TODO (Future reference for code or hardware)
-* Refactor code into multiple files
+* ~~Refactor code into multiple files~~ - done but poorly
 * Timer
 * Stopwatch
 * Start designing PCB
@@ -97,6 +97,7 @@ void buttonLongClick(Button2& b){
 * Amount of steps
 * Current weather
 * Wifi indicator
+* Fix button inputs not registering when startupProcedure is turned off (no time data)
 
 
 
