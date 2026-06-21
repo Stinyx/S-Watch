@@ -2,6 +2,9 @@
 
 #include "Draw.h"
 
+extern int menuScrollOffset;
+extern const int visibleItems;
+
 // Draws a single 7-segment digit on the display
 void draw_digit(int x, int y, int digit, int style);
 
@@ -28,3 +31,7 @@ void refresh_display();
 
 // Draws an image on screen
 void draw_image(int x, int y, int w, int h, const unsigned char* image);
+
+void draw_sprite(int x, int y, int w, int h, const unsigned char* image);
+
+void draw_background(const unsigned char* backgroundImage);

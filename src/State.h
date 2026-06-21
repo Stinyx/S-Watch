@@ -21,3 +21,5 @@ extern int state;
 
 // If watchstate changes, do something only once
 void onStateEnter(WatchState state);
+
+void set_current_state(WatchState newState);

@@ -1,6 +1,6 @@
 #pragma once
 
-// Button2 
+// Button2 library for managing buttons
 #include "Button2.h"
 
 #define BUTTON_PIN1 33
@@ -11,18 +11,11 @@ extern Button2 button1;
 extern Button2 button2;
 extern Button2 button3;
 
-// Button logic for a triple click (Settings screen for now)
-void buttonTripleClick();
-
-// Button logic for a long click (NTP sync for now)
-void buttonLongClick(Button2& b);
-
-void returnToHome(Button2& b);
-
 // Button2 setup (Input)
 void button_init();
 
-// TEMPORARY BUTTON LOGIC TESTING, SUBJECT TO CHANGE
+// Each buttons functions
 void button_handler_init();
 
+// Loop to check button presses
 void ButtonLoop();

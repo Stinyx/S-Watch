@@ -12,13 +12,13 @@ int state = 0;
 void onStateEnter(WatchState state) {
   // Reset text size (AND MAYBE OTHER THINGS IN THE FUTURE)
   display.setTextSize(1);
-  refresh_display();
+  //refresh_display();
 
   switch(state) {
 
     case CLOCK:
       display.setTextSize(2);
-      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, clk_bg);
+      draw_background(clk_bg);
       if(drawDate) draw_date();
       draw_time();
       break;
@@ -29,30 +29,36 @@ void onStateEnter(WatchState state) {
 
     case SETTINGS:
       currentMenuSelected = 0;
-      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, cfg_bg);
+      draw_background(cfg_bg);
       draw_settings();
       break;
 
     case ALARM:
-      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, alm_bg);
+      draw_background(alm_bg);
       break;
 
     case TIMER:
-      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, tmr_bg);
+      draw_background(tmr_bg);
       break;
 
     case NAVIGATION:
       currentNavigationSelected = 0;
-      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, nav_bg);
+      draw_background(nav_bg);
       draw_navigation();
       break;
 
     case ABOUT:
-      if(drawBackground) draw_image(0, 0, FULLSCREEN, FULLSCREEN, abt_bg);
+      draw_background(abt_bg);
       draw_about();
       break;
 
     default:
       break;
+  }
+}
+
+void set_current_state(WatchState newState){
+  if(currentState != NTPSYNCING){
+    currentState = newState;
   }
 }
