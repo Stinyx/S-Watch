@@ -90,7 +90,7 @@ void buttonLongClick(Button2& b){
 * ~~Refactor code into multiple files~~ - done but poorly
 * Timer
 * Stopwatch
-* Start designing PCB
+* Start designing PCB (postponed until i have the motivation and money)
 * Redo the startup procedure
 * More customization and easier custom screens
 * Battery percentage indicator
@@ -98,6 +98,7 @@ void buttonLongClick(Button2& b){
 * Current weather
 * Wifi indicator
 * Fix button inputs not registering when startupProcedure is turned off (no time data)
+* integrate custom watchfaces similar to watchy's implementation
 
 
 
