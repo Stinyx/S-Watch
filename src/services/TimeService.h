@@ -20,3 +20,12 @@ String return_local_time_from_tm(struct tm t);
 // Syncs the NTP data from a NTP server
 void sync_ntp();
 
+class TimeService {
+public:
+    void begin();
+    void update();
+
+    bool getDateTime(DateTime& result) const;
+    bool isTimeValid() const;
+};
+

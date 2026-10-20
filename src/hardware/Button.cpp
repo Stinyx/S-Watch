@@ -1,6 +1,6 @@
 #include "Button.h"
 #include "State.h"
-#include "debug.h"
+#include "config/Debug.h"
 #include "settings.h"
 
 // Input variables
