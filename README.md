@@ -105,7 +105,7 @@ void buttonLongClick(Button2& b){
 * Amount of steps
 * Current weather
 * Wifi indicator
-* Battery percentage indicator
+* Fix button inputs not registering when startupProcedure is turned off (no time data)
 
 
 
