@@ -1,14 +1,13 @@
 S2-Watch (Stinyx Smartwatch)
 ============================
 
-Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch](https://watchy.sqfmi.com/) using basically the same components
+Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch](https://watchy.sqfmi.com/) their kit for the hardware
 
-## Hardware
+## Hardware (for breadboard prototyping)
 
 * [Good Display GDEY0154D67 1.54" 200x200 ePaper display](https://www.laskakit.cz/good-display-gdey0154d67-1-54--200x200-epaper-displej/)
-* [GeB LiPol Battery 503035 500mAh 3.7V JST-PH 2.0](https://www.laskakit.cz/baterie-li-po-3-7v-500mah-lipo/) (after i have PCB, usb-micro for now)
-* ESP32 microcontroller (for now, planning for a custom PCB)
-* (Custom PCB in the far far future)
+* [GeB LiPol Battery 503035 500mAh 3.7V JST-PH 2.0](https://www.laskakit.cz/baterie-li-po-3-7v-500mah-lipo/) 
+* ESP32 microcontroller 
 
 ## Features
 
@@ -41,7 +40,7 @@ Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch
 - Written in `C++` in `VSCode` using `PlatformIO` for writing to the MCU
 - All UI elements and art handmade by me in `GIMP`
 
-## Wiring (Until PCB is made)
+## Wiring (for breadboard)
 
 `ESP32`        `E‑Ink Display`  
 GPIO18  →    CLK  
@@ -52,7 +51,7 @@ GPIO5   →    CS
 GND     →    GND  
 3V3     →    VCC  
 
-## Button usage for now (deprecated, subject to change frequently)
+## Button usage for now (deprecated and redone completely)
 
 ### Button 1 (GPIO33)
 * Long press - Sync NTP data
@@ -87,17 +86,26 @@ void buttonLongClick(Button2& b){
 ~~~
 
 ## TODO (Future reference for code or hardware)
+
+# What i want to achieve
 * ~~Refactor code into multiple files~~ - done but poorly
-* Timer
-* Stopwatch
-* Start designing PCB
+* ~~Show the current time~~ - done
+* ~~Settings for customization~~ - done
+* ~~Automatic NTP syncing~~ - done but poorly
 * Redo the startup procedure
 * More customization and easier custom screens
-* Battery percentage indicator
+* Fix button inputs not registering when startupProcedure is turned off (no time data)
+
+# What is optional
+* Start designing PCB
+* Timer
+* Stopwatch
+* ESPNow functionality
+* Current Soundcloud song info through BLE 
 * Amount of steps
 * Current weather
 * Wifi indicator
-* Fix button inputs not registering when startupProcedure is turned off (no time data)
+* Battery percentage indicator
 
 
 
