@@ -7,6 +7,7 @@ Draw draw(display);
 TestScreen testScreen(draw);
 
 void App::begin() {
+    testScreen.enter();
     /*
     display.begin();
     buttons.begin();

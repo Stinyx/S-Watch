@@ -4,11 +4,12 @@
 
 class Draw {
 public:
-    explicit Draw(GxEPD2_BW<GxEPD2_DRIVER_CLASS, 200>& display);
+    explicit Draw(Display& display);
 
-    void centeredText( const char* text, int y );
+    void centeredText(const char* text, int y);
 
-    //void horizontalLine(int y);
+private:
+    Display& display;
 };
 
 /*
