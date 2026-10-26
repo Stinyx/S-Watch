@@ -4,15 +4,14 @@
 
 Draw draw;
 TestScreen testScreen(draw);
+Display displayController;
 
 void App::begin() {
-    display.init();
+    displayController.init();
 
-    display.setFullWindow();
     display.firstPage();
-
     do {
-        testScreen.enter();
+        testScreen.draw();
     } while (display.nextPage());
 }
 
