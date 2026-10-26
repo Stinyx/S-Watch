@@ -15,5 +15,5 @@ public:
 
 private:
     //WatchFace* activeWatchFace = nullptr;
-     Draw& draw;
+     Draw& drawing;
 };

@@ -1,15 +1,8 @@
 #pragma once
 
-#include "hardware/Display.h"
-
 class Draw {
 public:
-    explicit Draw(Display& display);
-
     void centeredText(const char* text, int y);
-
-private:
-    Display& display;
 };
 
 /*

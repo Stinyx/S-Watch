@@ -1,9 +1,17 @@
 #include "TestScreen.h"
 
-TestScreen::TestScreen(Draw& draw)
-    : draw(draw) {}
+TestScreen::TestScreen(Draw& drawing)
+    : drawing(drawing) {}
+
+void TestScreen::update() {
+}
+
+void TestScreen::handleInput(Input input) {
+}
+
+void TestScreen::draw(){
+}
 
 void TestScreen::enter() {
-    draw.centeredText("12:45", 80);
-    //draw.horizontalLine(100);
+    drawing.centeredText("12:45", 80);
 }

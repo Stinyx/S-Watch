@@ -2,8 +2,7 @@
 #include "graphics/Draw.h"
 #include "screens/TestScreen.h"
 
-Display display;
-Draw draw(display);
+Draw draw;
 TestScreen testScreen(draw);
 
 void App::begin() {

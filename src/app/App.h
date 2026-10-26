@@ -7,8 +7,8 @@
 
 class App {
 public:
-    App();
-    ~App();
+    App() = default;
+    ~App() = default;
     void begin();
     void update();
 
