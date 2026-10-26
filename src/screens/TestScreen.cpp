@@ -1,10 +1,11 @@
 #include "TestScreen.h"
+#include "Images.h"
 
 TestScreen::TestScreen(Draw& drawing)
     : drawing(drawing) {}
 
 void TestScreen::draw() {
-    drawing.centeredText("12:45", 80);
+    drawing.drawImage(flowersakuralogo);
 }
 
 void TestScreen::enter() {}

@@ -14,3 +14,7 @@ void Draw::centeredText(const char* text, int y) {
     display.setCursor(x, y);
     display.print(text);
 }
+
+void Draw::drawImage(const unsigned char* image){
+    display.drawXBitmap(0, 0, image, 200, 200, GxEPD_BLACK);
+}
