@@ -1,7 +1,7 @@
 S2-Watch (Stinyx Smartwatch)
 ============================
 
-Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch](https://watchy.sqfmi.com/) their kit for the hardware
+Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch](https://watchy.sqfmi.com/), using their kit for the hardware, i do use AI for occasional help, since i am not the best programmer around
 
 ## Hardware (for breadboard prototyping)
 
@@ -9,7 +9,7 @@ Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch
 * [GeB LiPol Battery 503035 500mAh 3.7V JST-PH 2.0](https://www.laskakit.cz/baterie-li-po-3-7v-500mah-lipo/) 
 * ESP32 microcontroller 
 
-## Features
+## ~~Features~~ Redoing whole code
 
 * Automatic NTP synchronization upon watch boot
 * Manual NTP synchronization
@@ -17,7 +17,7 @@ Simple open-source E-ink based watch on the ESP32, inspired by the [Watchy watch
 * Multiple watch background styles (eventually)
 * External buttons mapped for changing screens and UI handling
 
-## Integrated Menus/Screens
+## ~~Integrated Menus/Screens~~ Redoing whole code
 
 * **Clock** - shows current date and time
 * **Settings** - for changing UI and NTP Syncing, other settings soon
@@ -50,40 +50,6 @@ GPIO16  →    RST
 GPIO5   →    CS  
 GND     →    GND  
 3V3     →    VCC  
-
-## Button usage for now (deprecated and redone completely)
-
-### Button 1 (GPIO33)
-* Long press - Sync NTP data
-* Click - Nothing for now (select element in settings UI later)
-* Double click - Show YOU WEEZO image
-* Triple click - Settings menu (empty for now)
-
-for triple and double click, you click them again the same amount of times to go back to the clock  
-
-example usage in code as functions for Button2 callback set functions:
-
-~~~cpp
-void buttonDoubleClick(Button2& b){
-  if(currentState != WEEZO){
-    currentState = WEEZO;
-  }else if(currentState == WEEZO){
-    currentState = CLOCK;
-  }
-}
-
-void buttonTripleClick(Button2& b){
-  if(currentState != SETTINGS){
-    currentState = SETTINGS;
-  }else{
-    currentState = CLOCK;
-  }
-}
-
-void buttonLongClick(Button2& b){
-  currentState = NTPSYNCING;
-}
-~~~
 
 ## TODO (Future reference for code or hardware)
 
