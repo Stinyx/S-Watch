@@ -1,15 +1,13 @@
 #include "Display.h"
 
+#include "GxEPD2_display_selection_new_style.h"
 
-GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, 200> display(
-  GxEPD2_DRIVER_CLASS(EPD_CS, 17, 16, 4)
-);
 
-void Display::init(){  
-  display.init(115200);
-  display.setRotation(0);
-  display.setFont(&FreeMonoBold9pt7b);
-  display.setTextColor(GxEPD_BLACK);
-  display.setFullWindow();
-  display.setTextSize(1);
+void Display::init() {
+    epaperDisplay.init(115200);
+    epaperDisplay.setRotation(0);
+    epaperDisplay.setFont(&FreeMonoBold9pt7b);
+    epaperDisplay.setTextColor(GxEPD_BLACK);
+    epaperDisplay.setFullWindow();
+    epaperDisplay.setTextSize(1);
 }

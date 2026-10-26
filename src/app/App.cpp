@@ -6,21 +6,14 @@ Draw draw;
 TestScreen testScreen(draw);
 
 void App::begin() {
-    testScreen.enter();
-    /*
-    display.begin();
-    buttons.begin();
-    storage.begin();
-    timeService.begin();
-    */
+    display.init();
 
+    display.setFullWindow();
+    display.firstPage();
+
+    do {
+        testScreen.draw();
+    } while (display.nextPage());
 }
 
-void App::update() {
-       /*
-    buttons.update();
-    timeService.update();
-
-    screenManager.update();
-    */
-}
+void App::update() {}

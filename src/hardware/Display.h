@@ -4,10 +4,12 @@
 #include "GxEPD2_display_selection_new_style.h"
 #include <Fonts/FreeMonoBold9pt7b.h>
 
-class Display{
-    public:
-        Display();
-        void init();
+using EpaperDisplay =
+    GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, 200>;
 
-    private:
+extern EpaperDisplay epaperDisplay;
+
+class Display {
+public:
+    void init();
 };
