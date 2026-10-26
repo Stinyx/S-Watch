@@ -7,6 +7,8 @@
 
 class App {
 public:
+    App();
+    ~App();
     void begin();
     void update();
 

@@ -2,9 +2,8 @@
 
 enum class Input {
     None,
-    Left,
-    Right,
+    Up,
+    Down,
     Select,
     Back,
-    LongSelect
 };
