@@ -1,3 +1,4 @@
+/*
 #include "Settings.h"
 #include "debug.h"
 #include "UserInterface.h"
@@ -105,4 +106,4 @@ void navigation_init(){
   new_navigation("Alarm", [](){currentState = ALARM;});
   new_navigation("About", [](){currentState = ABOUT;});
 }
-
+*/

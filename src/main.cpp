@@ -1,3 +1,4 @@
+/*
 #include <WiFi.h>
 #include "Settings.h"
 #include "Debug.h"
@@ -7,7 +8,9 @@
 #include "UserInterface.h"
 #include "wificredentials.h"
 #include "Init.h"
-
+*/
+#include "app/App.h"
+/*
 // Timer variables
 unsigned long lastUpdate = 0;
 int lastConnectionUpdate = 0;
@@ -69,15 +72,14 @@ void sync_ntp(){
 
   currentState = CLOCK;
 }
-
+*/
 
 // Basic arduino setup
 void setup() {
-  // Set base state
-  currentState = CLOCK;
 
-  Init();
+  //Init();
 
+  /*
   if(startupProcedure){
     //NTP and WIFI connection setup
     unsigned long wifiStart = millis();
@@ -159,8 +161,11 @@ void setup() {
     WiFi.disconnect(true);
     WiFi.mode(WIFI_OFF);
   }
+
+  */
 }
 
+/*
 // Basic arduino loop
 void loop() {
 
@@ -205,4 +210,8 @@ void loop() {
       break;
   }
 }
+*/
 
+void loop(){
+  // Empty cause idk
+}

@@ -1,3 +1,4 @@
+/*
 #include <functional>
 #include <vector>
 
@@ -41,3 +42,4 @@ extern int lastNavigationSelected;
 void settings_init();
 
 void navigation_init();
+*/

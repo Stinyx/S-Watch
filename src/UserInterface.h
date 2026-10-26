@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include "Draw.h"
@@ -35,3 +36,4 @@ void draw_image(int x, int y, int w, int h, const unsigned char* image);
 void draw_sprite(int x, int y, int w, int h, const unsigned char* image);
 
 void draw_background(const unsigned char* backgroundImage);
+*/

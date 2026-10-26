@@ -7,15 +7,16 @@
 #define BUTTON_PIN2 32
 #define BUTTON_PIN3 35
 
-extern Button2 button1;
-extern Button2 button2;
-extern Button2 button3;
+class Button{
+private:
+    /* data */
+public:
+    Button(/* args */);
+    ~Button();
+    void Init();
+    void Update();
+    Button2 button1;
+    Button2 button2;
+    Button2 button3;
+};
 
-// Button2 setup (Input)
-void button_init();
-
-// Each buttons functions
-void button_handler_init();
-
-// Loop to check button presses
-void ButtonLoop();

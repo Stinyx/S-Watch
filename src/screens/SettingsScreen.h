@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include "app/Screen.h"
@@ -13,3 +14,4 @@ public:
 private:
     WatchFace* activeWatchFace = nullptr;
 };
+*/

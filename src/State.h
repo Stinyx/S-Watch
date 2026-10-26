@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #pragma once
@@ -23,3 +24,4 @@ extern int state;
 void onStateEnter(WatchState state);
 
 void set_current_state(WatchState newState);
+*/

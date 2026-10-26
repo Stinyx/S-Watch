@@ -1,4 +1,4 @@
-
+/*
 // GxEPD2
 #include <GxEPD2_BW.h>
 #include <Fonts/FreeMonoBold9pt7b.h>
@@ -33,3 +33,4 @@ void epdDrawPartial(int x, int y, int w, int h, Funcs... funcs)
 
 // GxEPD setup (Drawing on e-ink screen)
 void gxepd_init();
+*/

@@ -1,3 +1,5 @@
+/*
+
 #include "TimeManager.h"
 #include "wificredentials.h"
 #include "UserInterface.h"
@@ -32,6 +34,6 @@ String return_local_time_from_tm(struct tm t){
   sprintf(buf, "%d.%d-%d/%02d:%02d:%02d", t.tm_mday, t.tm_mon + 1, t.tm_year + + 1900, t.tm_hour, t.tm_min, t.tm_sec);
   return String(buf);
 }
-
+*/
 
 

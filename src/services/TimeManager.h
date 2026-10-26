@@ -1,3 +1,5 @@
+/*
+
 #pragma once
 
 #include "time.h"
@@ -28,4 +30,4 @@ public:
     bool getDateTime(DateTime& result) const;
     bool isTimeValid() const;
 };
-
+*/

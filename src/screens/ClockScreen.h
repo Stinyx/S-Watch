@@ -1,7 +1,9 @@
+/*
+
 #pragma once
 
 #include "app/Screen.h"
-#include "watchfaces/WatchFace.h"
+#include "watchfaces/MinimalWatchFace.h"
 
 class ClockScreen : public Screen {
 public:
@@ -13,3 +15,4 @@ public:
 private:
     WatchFace* activeWatchFace = nullptr;
 };
+*/

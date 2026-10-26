@@ -1,3 +1,5 @@
+/*
+
 #include "Init.h"
 
 #include "settings.h"
@@ -13,3 +15,4 @@ void Init(){
     navigation_init();
     refresh_display(); 
 }
+*/

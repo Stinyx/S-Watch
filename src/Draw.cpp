@@ -1,3 +1,5 @@
+/*
+
 #include "Draw.h"
 
 // GxEPD setup (Drawing on e-ink screen)
@@ -9,3 +11,4 @@ void gxepd_init(){
   display.setFullWindow();
   display.setTextSize(1);
 }
+  */

@@ -1,3 +1,4 @@
+/*
 #include "State.h"
 #include "debug.h"  
 #include "UserInterface.h"
@@ -62,3 +63,5 @@ void set_current_state(WatchState newState){
     currentState = newState;
   }
 }
+
+*/

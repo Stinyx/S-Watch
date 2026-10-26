@@ -11,9 +11,11 @@ public:
     void update();
 
 private:
+/*
     Display display;
     Buttons buttons;
     TimeService timeService;
     SettingsStorage storage;
     ScreenManager screenManager;
+*/
 };

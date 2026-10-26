@@ -1,20 +1,20 @@
 #include "Button.h"
-#include "State.h"
-#include "config/Debug.h"
-#include "settings.h"
-
-// Input variables
-Button2 button1;
-Button2 button2;
-Button2 button3;
 
 // Button2 setup (Input)
-void button_init(){ 
+void Button::Init(){ 
   button1.begin(BUTTON_PIN1, INPUT_PULLDOWN, false);
   button2.begin(BUTTON_PIN2, INPUT_PULLDOWN, false);
   button3.begin(BUTTON_PIN3, INPUT_PULLDOWN, false);
 }
 
+// Button loop
+void Button::Update(){
+  button1.loop();
+  button2.loop();
+  button3.loop();
+}
+
+/*
 // Button logic, might change in the future since 4 buttons are planned
 void button_handler_init(){ 
 
@@ -31,10 +31,6 @@ void button_handler_init(){
   //Button 3 logic
   button3.setTripleClickHandler([](Button2& b){set_current_state(NAVIGATION);});
 }
+*/
 
 // Check if each of the buttons has been pressed or not
-void ButtonLoop(){
-  button1.loop();
-  button2.loop();
-  button3.loop();
-}
