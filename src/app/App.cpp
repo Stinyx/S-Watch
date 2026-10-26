@@ -12,7 +12,7 @@ void App::begin() {
     display.firstPage();
 
     do {
-        testScreen.draw();
+        testScreen.enter();
     } while (display.nextPage());
 }
 
