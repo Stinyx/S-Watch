@@ -5,7 +5,8 @@
 #include "services/PowerManager.h"
 
 Draw draw;
-TestScreen testScreen(draw);
+PowerManager powerManager;
+TestScreen testScreen(draw, powerManager);
 Display displayController;
 
 void App::begin() {
@@ -23,7 +24,7 @@ void App::begin() {
 void App::update() {
     timeManager.update();
     // 1. Vykreslení obrazovky
-    draw.setTimePartialWindow();
+    draw.setTimePartial();
 
     display.firstPage();
     do {

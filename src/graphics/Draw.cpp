@@ -1,9 +1,8 @@
 #include "Draw.h"
 #include "hardware/Display.h"
 #include "Clockfaces.h"
-#include "services/TimeManager.h"
+
 #include "Images.h"
-#include "services/PowerManager.h"
 
 void Draw::centeredText(const char* text, int y) {
     int16_t x1, y1;
@@ -69,16 +68,25 @@ void Draw::drawTime(int x, int y) {
     }
 }
 
-void Draw::setTimePartialWindow() {
-    display.setPartialWindow(15, 50, 169, digit_height);
+void Draw::setPartialWindow(int x, int y, int width, int height) {
+    display.setPartialWindow(x, y, width, height);
 }
 
-void Draw::drawBattery(int x, int y){
-    PowerManager powerManager;
-    BatteryInfo battery = powerManager.getBatteryInfo();
+void Draw::setTimePartial() {
+    setPartialWindow(15, 50, 169, digit_height);
+}
+
+void Draw::setBatteryPartial() {
+    setPartialWindow(15, 130, 100, 40);
+}
+
+void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
+    char buffer[16];
+
+    snprintf(buffer, sizeof(buffer), "%d%%", battery.percentage);
 
     display.setCursor(x, y);
-    display.printf("%d", battery.percentage);
+    display.print(buffer);
 }
 /*
 void draw_time(){

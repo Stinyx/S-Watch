@@ -7,7 +7,7 @@
 
 class TestScreen : public Screen {
 public:
-    explicit TestScreen(Draw& draw);
+    explicit TestScreen(Draw& draw, PowerManager& power);
     void enter() override;
     void update() override;
     void handleInput(Input input) override;
@@ -16,4 +16,5 @@ public:
 private:
     //WatchFace* activeWatchFace = nullptr;
      Draw& drawing;
+     PowerManager& power;
 };
