@@ -2,6 +2,7 @@
 #include "graphics/Draw.h"
 #include "screens/TestScreen.h"
 #include "services/TimeManager.h"
+#include "services/PowerManager.h"
 
 Draw draw;
 TestScreen testScreen(draw);
