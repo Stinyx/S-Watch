@@ -8,3 +8,4 @@ int currentClockStyle = 1; //0 is first, indexes in an array  //0-7s //1-7sg //2
 int drawBackground = 1; // 1 - Background draws, 0 - background doesn't draw
 int drawDate = 1; // 1 - Date draws, 0 - Date doesn't draw
 int militaryTime = 0; // 1 - 24 Hour, 0 - 12 Hour
+int wifiPreferencesSavedDebug = 1;

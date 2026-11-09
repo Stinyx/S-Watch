@@ -4,9 +4,7 @@
 #include "Debug.h"
 
 // Draws a single 7-segment digit on the display
-void draw_digit(int x, int y, int digit, int style){
-  display.drawXBitmap(x, y, clockStyles[style][digit], digit_width, digit_height, GxEPD_BLACK);
-}
+
 
 // Draws text on screen (basically display.printf() but e-ink and dynamic with partial refresh)
 void draw_text(int x, int y, const char* fmt, ...)
@@ -100,71 +98,7 @@ void draw_date(){
 }
 
 // Draws out the current time on screen
-void draw_time(){
-  struct tm timeinfo;  
-  char timeToString[4];
 
-  int winX = 15;
-  int winY = 50;
-  int winW = 169; 
-  int winH = digit_height; 
-  int digitSpacing = 5;
-
-  if( !getLocalTime(&timeinfo) ) { 
-    sprintf(timeToString, "0000"); 
-    display.setPartialWindow(winX, winY, winW, winH);
-    display.firstPage();
-    do {
-        int offset = 0;
-        for(int i = 0; i < 4; i++){
-            int digit = timeToString[i] - '0';
-            draw_digit(winX + offset, winY, digit, currentClockStyle);
-
-            if(i == 1){
-                offset += digit_width + 3;
-                display.drawXBitmap(winX + offset, winY + (digit_height - dots_height)/2, dots, dots_width, dots_height, GxEPD_BLACK);
-                offset += dots_width + 3;
-            }else{
-                offset += digit_width + digitSpacing;
-            }
-        }
-    } while (display.nextPage());
-    return;
-  }
-
-  int hour = timeinfo.tm_hour;
-  int minute = timeinfo.tm_min;
-  int second = timeinfo.tm_sec;
-  const char* ampm = (timeinfo.tm_hour >= 12) ? "PM" : "AM";
-
-  if (militaryTime == 0) {
-    if (hour == 0) {
-        hour = 12;      // Midnight -> 12 AM
-    } else if (hour > 12) {
-        hour -= 12;     // 13-23 -> 1-11 PM
-    }
-  }
-
-  sprintf(timeToString, "%02d%02d", hour, minute); 
-
-  display.setPartialWindow(winX, winY, winW, winH);
-  display.firstPage();
-  do {
-      int offset = 0;
-      for(int i = 0; i < 4; i++){
-          int digit = timeToString[i] - '0';
-          draw_digit(winX + offset, winY, digit, currentClockStyle);
-
-          if(i == 1){
-              offset += digit_width + 3;
-              display.drawXBitmap(winX + offset, winY + (digit_height - dots_height)/2, dots, dots_width, dots_height, GxEPD_BLACK);
-              offset += dots_width + 3;
-          }else{
-              offset += digit_width + digitSpacing;
-          }
-      }
-  } while (display.nextPage());
-}
 
 // Draws a white screen to avoid a full screen refresh but avoid ghosting a little
 void draw_blank(){

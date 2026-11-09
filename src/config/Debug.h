@@ -5,3 +5,4 @@ extern int currentClockStyle;
 extern int drawBackground;
 extern int drawDate;
 extern int militaryTime;
+extern int wifiPreferencesSavedDebug;

@@ -1,3 +1,10 @@
+#pragma once
+
+#include "TimeManager.h"
+#include "config/WifiCredentials.h"
+#include <WiFi.h>
+#include "config/Debug.h"
+
 /*
 
 #include "TimeManager.h"
@@ -5,10 +12,7 @@
 #include "UserInterface.h"
 #include "State.h"
 
-// NTP Variables
-const long gmtOffset_sec = 3600;
-const int daylightOffset_sec = 3600;
-const char* ntpServer = "pool.ntp.org";
+
 
 // Returns the local time in a formatted string
 String return_local_time() {
@@ -49,7 +53,7 @@ String return_local_time_from_tm(struct tm t){
       [&](){draw_text(0, 10, "> CONNECTING TO\nLOCAL WIFI");}
     );
 
-    WiFi.begin(HWIFISSID, HWIFIPSWD);
+  
 
     while (WiFi.status() != WL_CONNECTED) {
 
@@ -68,7 +72,7 @@ String return_local_time_from_tm(struct tm t){
       delay(200); 
     }
 
-    struct tm timeinfo;
+
     int retries = 0;  
 
     // Display that wifi was connected
@@ -79,7 +83,7 @@ String return_local_time_from_tm(struct tm t){
         }
     );
     
-    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+    
 
     // Display NTP Waiting status message
     epdDraw(
@@ -114,10 +118,76 @@ String return_local_time_from_tm(struct tm t){
     delay(2000);
 
     // Disconnect wifi for power saving
-    WiFi.disconnect(true);
-    WiFi.mode(WIFI_OFF);
+
   }
 
   */
+
+DateTime TimeManager::getDateTime() const{
+  DateTime time;
+
+  WiFi.begin(HWIFISSID, HWIFIPSWD);
+
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi connected!");
+
+  configTzTime(this->timeZone, this->ntpServer);
+
+  struct tm timeinfo;
+
+  if (!getLocalTime(&timeinfo, 5000)) {
+    Serial.println("Unable to get time from NTP");
+
+    time.hour = 0;
+    time.minute = 0;
+    time.second = 0;
+    time.dayNumber;
+    time.dayText = "NONE";
+    time.year = 0;
+    time.monthNumber = 0;
+    time.monthText = "NONE";
+
+    return time;
+  }
+  
+  Serial.println(&timeinfo, "%d.%m.%Y %H:%M:%S");
+
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
+
+  return time;
+};
+
+DateTime TimeManager::getCurrentTime() const{
+  DateTime time = this->currentTime;
+
+  return time;
+};
+
+void TimeManager::init(){
+  DateTime time;
+
+  time.hour = 0;
+  time.minute = 0;
+  time.second = 0;
+  time.dayNumber;
+  time.dayText = "NONE";
+  time.year = 0;
+  time.monthNumber = 0;
+  time.monthText = "NONE";
+
+  this->currentTime = time;
+
+};
+
+void TimeManager::update(){
+  
+}
+
+
 
 

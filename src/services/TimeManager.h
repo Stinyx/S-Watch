@@ -1,14 +1,11 @@
-/*
-
 #pragma once
 
 #include "time.h"
-#include <Arduino.h>
+//#include <Arduino.h>
 
+/*
 // NTP Variables
-extern const long gmtOffset_sec;
-extern const int daylightOffset_sec;
-extern const char* ntpServer;
+
 
 // Returns the local time in a formatted string
 String return_local_time();
@@ -21,13 +18,33 @@ String return_local_time_from_tm(struct tm t);
 
 // Syncs the NTP data from a NTP server
 void sync_ntp();
+*/
 
-class TimeService {
+class DateTime{
+    public:
+        int hour;
+        int minute;
+        int second;
+        int dayNumber;
+        char* dayText;
+        int year;
+        int monthNumber;
+        char* monthText;
+};
+
+
+class TimeManager {
 public:
-    void begin();
+    void init();
     void update();
 
-    bool getDateTime(DateTime& result) const;
-    bool isTimeValid() const;
+    DateTime getDateTime() const;
+    DateTime getCurrentTime() const;
+private:
+    const long gmtOffset_sec = 3600;
+    const int daylightOffset_sec = 3600;
+    const char* ntpServer = "pool.ntp.org";
+    const char* timeZone = "CET-1CEST,M3.5.0,M10.5.0/3";
+    DateTime currentTime;
 };
-*/
+

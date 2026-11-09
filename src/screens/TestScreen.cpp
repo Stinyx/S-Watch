@@ -5,7 +5,8 @@ TestScreen::TestScreen(Draw& drawing)
     : drawing(drawing) {}
 
 void TestScreen::draw() {
-    drawing.drawImage(flowersakuralogo);
+    //drawing.drawImage(flowersakuralogo);
+    drawing.drawTime(0, 0);
 }
 
 void TestScreen::enter() {}
