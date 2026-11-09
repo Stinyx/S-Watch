@@ -1,7 +1,7 @@
 #include "Display.h"
 
 GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, 200> display(
-    GxEPD2_DRIVER_CLASS(EPD_CS, 17, 16, 4)
+    GxEPD2_DRIVER_CLASS(33, 34, 35, 36)
 );
 
 void Display::init(bool initial) {
