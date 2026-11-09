@@ -8,17 +8,13 @@ TestScreen testScreen(draw);
 Display displayController;
 
 void App::begin() {
-    // Zjistíme, zda jde o úplně první spuštění, nebo o probuzení z časovače
+    displayController.init();
+
+    // Only synchronize with NTP on a fresh startup.
     if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER) {
-        // Běží POUZE při prvním zapnutí (např. připojení k Wi-Fi a NTP)
-        displayController.init();
         timeManager.init();
-    } else {
-        // Při probuzení ze spánku jen probudíme sběrnici displeje (bez NTP)
-        displayController.init();
     }
 
-    // Okamžitě přejdeme do update() pro vykreslení a uspání
     update();
 }
 

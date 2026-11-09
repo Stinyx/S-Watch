@@ -136,12 +136,17 @@ void loop() {
 
 App app;
 
-void setup(){
-  Serial.begin(115200);
-  delay(500);
-  Serial.println("\n--- S-Watch starting ---");
+void setup() {
+    Serial.begin(115200);
+    delay(500);
 
-  app.begin();
+    if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) {
+        Serial.println("\n--- S-Watch waking up ---");
+    } else {
+        Serial.println("\n--- S-Watch starting ---");
+    }
+
+    app.begin();
 }
 
 void loop(){
