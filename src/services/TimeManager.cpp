@@ -194,7 +194,7 @@ DateTime TimeManager::getCurrentTime() const{
 };
 
 void TimeManager::init(){
-  this->currentTime = getCurrentTime();
+  currentTime = getCurrentTime();
 };
 
 void TimeManager::update() {
