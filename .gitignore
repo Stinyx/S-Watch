@@ -1,4 +1,4 @@
 .pio
 .vscode
-src/WifiCredentials.h
-src/WifiCredentials.cpp
+src/config/WifiCredentials.h
+

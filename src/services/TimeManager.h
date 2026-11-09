@@ -48,3 +48,5 @@ private:
     DateTime currentTime;
 };
 
+extern TimeManager timeManager;
+

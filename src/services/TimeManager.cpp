@@ -156,6 +156,15 @@ DateTime TimeManager::getDateTime() const{
   
   Serial.println(&timeinfo, "%d.%m.%Y %H:%M:%S");
 
+  time.hour = timeinfo.tm_hour;
+  time.minute = timeinfo.tm_min;
+  time.second = timeinfo.tm_sec;
+  time.dayNumber = timeinfo.tm_wday;
+  time.dayText = "IDK";
+  time.year = timeinfo.tm_year + 1900;
+  time.monthNumber = timeinfo.tm_mday;
+  time.monthText = "IDK";
+
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
 
@@ -170,23 +179,32 @@ DateTime TimeManager::getCurrentTime() const{
 
 void TimeManager::init(){
   DateTime time;
-
-  time.hour = 0;
-  time.minute = 0;
-  time.second = 0;
-  time.dayNumber;
-  time.dayText = "NONE";
-  time.year = 0;
-  time.monthNumber = 0;
-  time.monthText = "NONE";
+  time = getCurrentTime();
 
   this->currentTime = time;
 
 };
 
 void TimeManager::update(){
-  
+    // Restore timezone after deep-sleep restart.
+  setenv("TZ", timeZone, 1);
+  tzset();
+
+  struct tm timeinfo = {};
+
+  if (!getLocalTime(&timeinfo, 1000)) {
+      Serial.println("Internal clock unavailable");
+      return; // Keep the previous currentTime
+  }
+
+  currentTime.hour = timeinfo.tm_hour;
+  currentTime.minute = timeinfo.tm_min;
+  currentTime.second = timeinfo.tm_sec;
+  currentTime.dayNumber = timeinfo.tm_mday;
+  currentTime.year = timeinfo.tm_year + 1900;
+  currentTime.monthNumber = timeinfo.tm_mon + 1;
 }
+
 
 
 
