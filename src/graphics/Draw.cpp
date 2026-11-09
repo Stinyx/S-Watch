@@ -32,30 +32,31 @@ void Draw::drawTime(int x, int y){
     int winW = 169; 
     int winH = digit_height; 
     int digitSpacing = 5;
-    char* timeToString;
 
     TimeManager time;
     DateTime currentTime = time.getCurrentTime();
-    
-    display.setPartialWindow(winX, winY, winW, winH);
-    display.firstPage();
 
-    sprintf(timeToString, "%02d%02d",currentTime.hour, currentTime.minute); 
-    do {
-        int offset = 0;
-        for(int i = 0; i < 4; i++){
-            int digit = timeToString[i] - '0';
-            drawDigit(winX + offset, winY, digit, 1);
+    char timeToString[5] = "0000";
+    struct tm timeinfo;
 
-            if(i == 1){
-                offset += digit_width + 3;
-                display.drawXBitmap(winX + offset, winY + (digit_height - dots_height)/2, dots, dots_width, dots_height, GxEPD_BLACK);
-                offset += dots_width + 3;
-            }else{
-                offset += digit_width + digitSpacing;
-            }
+    if (getLocalTime(&timeinfo, 1000)) {
+        snprintf(timeToString, sizeof(timeToString),
+                "%02d%02d", currentTime.hour, currentTime.minute);
+    }
+
+    int offset = 0;
+    for(int i = 0; i < 4; i++){
+        int digit = timeToString[i] - '0';
+        drawDigit(winX + offset, winY, digit, 1);
+
+        if(i == 1){
+            offset += digit_width + 3;
+            display.drawXBitmap(winX + offset, winY + (digit_height - dots_height)/2, dots, dots_width, dots_height, GxEPD_BLACK);
+            offset += dots_width + 3;
+        }else{
+            offset += digit_width + digitSpacing;
         }
-    } while (display.nextPage());
+    }
 }
 
 /*
