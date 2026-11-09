@@ -8,10 +8,11 @@ TestScreen testScreen(draw);
 Display displayController;
 
 void App::begin() {
-    displayController.init();
+    bool initial = esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER;
 
-    // Only synchronize with NTP on a fresh startup.
-    if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER) {
+    displayController.init(initial);
+
+    if (initial) {
         timeManager.init();
     }
 
