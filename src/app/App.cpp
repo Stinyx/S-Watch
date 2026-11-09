@@ -6,7 +6,6 @@
 Draw draw;
 TestScreen testScreen(draw);
 Display displayController;
-TimeManager timeManager;
 
 void App::begin() {
     // Zjistíme, zda jde o úplně první spuštění, nebo o probuzení z časovače

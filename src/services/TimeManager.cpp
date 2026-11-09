@@ -129,10 +129,28 @@ DateTime TimeManager::getDateTime() const{
   WiFi.begin(HWIFISSID, HWIFIPSWD);
 
   Serial.print("Connecting to Wi-Fi");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+
+  unsigned long startAttempt = millis();
+
+  while (WiFi.status() != WL_CONNECTED &&
+        millis() - startAttempt < 10000) {
+      delay(500);
+      Serial.print(".");
   }
+
+  if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("\nWi-Fi connection timed out!");
+
+      WiFi.disconnect(true);
+      WiFi.mode(WIFI_OFF);
+
+      // Return a zero-initialized DateTime.
+      DateTime time = {};
+      time.dayText = (char*)"NONE";
+      time.monthText = (char*)"NONE";
+      return time;
+  }
+
   Serial.println("\nWi-Fi connected!");
 
   configTzTime(this->timeZone, this->ntpServer);
@@ -178,23 +196,19 @@ DateTime TimeManager::getCurrentTime() const{
 };
 
 void TimeManager::init(){
-  DateTime time;
-  time = getCurrentTime();
-
-  this->currentTime = time;
-
+  this->currentTime = getCurrentTime();
 };
 
-void TimeManager::update(){
-    // Restore timezone after deep-sleep restart.
+void TimeManager::update() {
+  // Restore timezone after deep sleep.
   setenv("TZ", timeZone, 1);
   tzset();
 
   struct tm timeinfo = {};
 
   if (!getLocalTime(&timeinfo, 1000)) {
-      Serial.println("Internal clock unavailable");
-      return; // Keep the previous currentTime
+      Serial.println("Could not read internal clock");
+      return;
   }
 
   currentTime.hour = timeinfo.tm_hour;
@@ -204,6 +218,9 @@ void TimeManager::update(){
   currentTime.year = timeinfo.tm_year + 1900;
   currentTime.monthNumber = timeinfo.tm_mon + 1;
 }
+
+TimeManager timeManager;
+
 
 
 

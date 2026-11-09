@@ -34,15 +34,12 @@ void Draw::drawTime(int x, int y){
     int digitSpacing = 5;
 
     TimeManager time;
-    DateTime currentTime = time.getCurrentTime();
+    DateTime currentTime = timeManager.getCurrentTime();
 
     char timeToString[5] = "0000";
-    struct tm timeinfo;
 
-    if (getLocalTime(&timeinfo, 1000)) {
-        snprintf(timeToString, sizeof(timeToString),
-                "%02d%02d", currentTime.hour, currentTime.minute);
-    }
+    snprintf(timeToString, sizeof(timeToString),
+            "%02d%02d", currentTime.hour, currentTime.minute);
 
     int offset = 0;
     for(int i = 0; i < 4; i++){
