@@ -55,6 +55,9 @@ void Draw::drawTime(int x, int y){
     }
 }
 
+void Draw::setTimePartialWindow() {
+    display.setPartialWindow(15, 50, 169, digit_height);
+}
 /*
 void draw_time(){
 

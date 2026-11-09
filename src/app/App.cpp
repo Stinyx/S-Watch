@@ -21,6 +21,8 @@ void App::begin() {
 void App::update() {
     timeManager.update();
     // 1. Vykreslení obrazovky
+    draw.setTimePartialWindow();
+
     display.firstPage();
     do {
         testScreen.draw();
