@@ -1,5 +1,3 @@
-#pragma once
-
 #include "TimeManager.h"
 #include "config/WifiCredentials.h"
 #include <WiFi.h>
@@ -200,23 +198,22 @@ void TimeManager::init(){
 };
 
 void TimeManager::update() {
-  // Restore timezone after deep sleep.
-  setenv("TZ", timeZone, 1);
-  tzset();
+    setenv("TZ", timeZone, 1);
+    tzset();
 
-  struct tm timeinfo = {};
+    struct tm timeinfo = {};
 
-  if (!getLocalTime(&timeinfo, 1000)) {
-      Serial.println("Could not read internal clock");
-      return;
-  }
+    if (!getLocalTime(&timeinfo, 1000)) {
+        Serial.println("Could not read internal clock");
+        return;
+    }
 
-  currentTime.hour = timeinfo.tm_hour;
-  currentTime.minute = timeinfo.tm_min;
-  currentTime.second = timeinfo.tm_sec;
-  currentTime.dayNumber = timeinfo.tm_mday;
-  currentTime.year = timeinfo.tm_year + 1900;
-  currentTime.monthNumber = timeinfo.tm_mon + 1;
+    currentTime.hour = timeinfo.tm_hour;
+    currentTime.minute = timeinfo.tm_min;
+    currentTime.second = timeinfo.tm_sec;
+    currentTime.dayNumber = timeinfo.tm_mday;
+    currentTime.year = timeinfo.tm_year + 1900;
+    currentTime.monthNumber = timeinfo.tm_mon + 1;
 }
 
 TimeManager timeManager;

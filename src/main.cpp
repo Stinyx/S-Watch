@@ -137,6 +137,10 @@ void loop() {
 App app;
 
 void setup(){
+  Serial.begin(115200);
+  delay(500);
+  Serial.println("\n--- S-Watch starting ---");
+
   app.begin();
 }
 

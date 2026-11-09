@@ -33,7 +33,6 @@ void Draw::drawTime(int x, int y){
     int winH = digit_height; 
     int digitSpacing = 5;
 
-    TimeManager time;
     DateTime currentTime = timeManager.getCurrentTime();
 
     char timeToString[5] = "0000";
