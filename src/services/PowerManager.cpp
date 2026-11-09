@@ -1,8 +1,8 @@
 #include "PowerManager.h"
 #include <Arduino.h>
 
-// Change this to your actual battery ADC pin.
 #define BATTERY_ADC_PIN 34
+#define CHARGING_STATUS_PIN 27
 
 // Example 100k + 100k voltage divider.
 #define ADC_VOLTAGE_DIVIDER 2.0f
@@ -13,6 +13,8 @@ void PowerManager::init() {
         BATTERY_ADC_PIN,
         ADC_11db
     );
+
+    pinMode(CHARGING_STATUS_PIN, INPUT_PULLUP);
 }
 
 float PowerManager::readVoltage() {
@@ -37,6 +39,8 @@ BatteryInfo PowerManager::getBatteryInfo() {
 
     info.voltage = readVoltage();
     info.percentage = calculatePercentage(info.voltage);
+
+    info.charging = digitalRead(CHARGING_STATUS_PIN) == LOW;
 
     return info;
 }

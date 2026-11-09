@@ -1,21 +1,31 @@
 #include "TestScreen.h"
 #include "Images.h"
 #include "services/PowerManager.h"
+#include "hardware/Display.h"
 
 TestScreen::TestScreen(Draw& drawing, PowerManager& power)
     : drawing(drawing), power(power) {}
 
 void TestScreen::draw() {
-    // Draw clock
+    // 1. Refresh the time area.
     drawing.setTimePartial();
 
-    drawing.drawTime(0, 0);
+    display.firstPage();
+    do {
+        drawing.drawTime(0, 0);
+    } while (display.nextPage());
 
-    // Draw battery
+    // 2. Read battery information.
+    BatteryInfo battery = power.getBatteryInfo();
+
+    // 3. Refresh the battery area independently.
     drawing.setBatteryPartial();
 
-    BatteryInfo battery = power.getBatteryInfo();
-    drawing.drawBattery(battery, 20, 150);
+    display.firstPage();
+    do {
+        display.fillRect(15, 130, 100, 40, GxEPD_WHITE);
+        drawing.drawBattery(battery, 20, 150);
+    } while (display.nextPage());
 }
 
 void TestScreen::enter() {}
