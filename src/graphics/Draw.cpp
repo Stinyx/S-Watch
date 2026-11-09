@@ -81,7 +81,7 @@ void Draw::setBatteryPartial() {
 }
 
 void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
-    char buffer[16];
+    char buffer[32];
 
     if(battery.charging){
         snprintf(buffer, sizeof(buffer), "%d%% %fv (charging)", battery.percentage, battery.voltage);
