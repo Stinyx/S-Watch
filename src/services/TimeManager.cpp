@@ -155,8 +155,11 @@ DateTime TimeManager::getDateTime() const{
 
   struct tm timeinfo;
 
-  if (!getLocalTime(&timeinfo, 5000)) {
+  if (!getLocalTime(&timeinfo, 15000)) {
     Serial.println("Unable to get time from NTP");
+
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
 
     time.hour = 0;
     time.minute = 0;
@@ -194,7 +197,7 @@ DateTime TimeManager::getCurrentTime() const{
 };
 
 void TimeManager::init(){
-  currentTime = getCurrentTime();
+  currentTime = getDateTime();
 };
 
 void TimeManager::update() {
