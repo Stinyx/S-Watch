@@ -77,7 +77,7 @@ void Draw::setTimePartial() {
 }
 
 void Draw::setBatteryPartial() {
-    setPartialWindow(15, 130, 100, 40);
+    setPartialWindow(15, 130, 190, 40);
 }
 
 void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {

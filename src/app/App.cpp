@@ -16,6 +16,13 @@ void App::begin() {
     powerManager.init();
 
     if (initial) {
+        // Clear the old firmware's image on first boot.
+        display.setFullWindow();
+        display.firstPage();
+        do {
+            display.fillScreen(GxEPD_WHITE);
+        } while (display.nextPage());
+
         timeManager.init();
     }
 

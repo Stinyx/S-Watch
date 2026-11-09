@@ -6,7 +6,7 @@
 #define USB_DETECT_PIN 21
 
 // Example 100k + 100k voltage divider.
-#define ADC_VOLTAGE_DIVIDER 2.0f
+#define ADC_VOLTAGE_DIVIDER ((360.0f + 100.0f) / 360.0f)
 
 void PowerManager::init() {
     analogReadResolution(12);
