@@ -26,30 +26,43 @@ void Draw::drawDigit(int x, int y, int digit, int style){
     display.drawXBitmap(x, y, clockStyles[style][digit], digit_width, digit_height, GxEPD_BLACK);
 }
 
-void Draw::drawTime(int x, int y){
+void Draw::drawTime(int x, int y) {
     int winX = 15;
     int winY = 50;
-    int winW = 169; 
-    int winH = digit_height; 
+    int winW = 169;
+    int winH = digit_height;
     int digitSpacing = 5;
+
+    // Clear only the time area.
+    display.fillRect(winX, winY, winW, winH, GxEPD_WHITE);
 
     DateTime currentTime = timeManager.getCurrentTime();
 
-    char timeToString[5] = "0000";
+    char timeToString[5];
 
     snprintf(timeToString, sizeof(timeToString),
-            "%02d%02d", currentTime.hour, currentTime.minute);
+             "%02d%02d", currentTime.hour, currentTime.minute);
 
     int offset = 0;
-    for(int i = 0; i < 4; i++){
+
+    for (int i = 0; i < 4; i++) {
         int digit = timeToString[i] - '0';
         drawDigit(winX + offset, winY, digit, 1);
 
-        if(i == 1){
+        if (i == 1) {
             offset += digit_width + 3;
-            display.drawXBitmap(winX + offset, winY + (digit_height - dots_height)/2, dots, dots_width, dots_height, GxEPD_BLACK);
+
+            display.drawXBitmap(
+                winX + offset,
+                winY + (digit_height - dots_height) / 2,
+                dots,
+                dots_width,
+                dots_height,
+                GxEPD_BLACK
+            );
+
             offset += dots_width + 3;
-        }else{
+        } else {
             offset += digit_width + digitSpacing;
         }
     }
