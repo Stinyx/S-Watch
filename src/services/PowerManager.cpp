@@ -41,8 +41,8 @@ BatteryInfo PowerManager::getBatteryInfo() {
 
     info.voltage = readVoltage();
     info.percentage = calculatePercentage(info.voltage);
-    info.charging = info.usbConnected && digitalRead(CHARGING_STATUS_PIN) == LOW;
     info.usbConnected = digitalRead(USB_DETECT_PIN) == HIGH;
-
+    info.charging = info.usbConnected && digitalRead(CHARGING_STATUS_PIN) == LOW;
+    
     return info;
 }
