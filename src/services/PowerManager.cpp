@@ -12,7 +12,7 @@ void PowerManager::init() {
     analogReadResolution(12);
     analogSetPinAttenuation(BATTERY_ADC_PIN, ADC_11db);
 
-    pinMode(CHARGING_STATUS_PIN, INPUT);
+    pinMode(CHARGING_STATUS_PIN, INPUT_PULLUP);
     pinMode(USB_DETECT_PIN, INPUT);
 }
 

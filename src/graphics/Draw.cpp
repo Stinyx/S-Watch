@@ -1,22 +1,7 @@
 #include "Draw.h"
 #include "hardware/Display.h"
 #include "Clockfaces.h"
-
 #include "Images.h"
-
-void Draw::centeredText(const char* text, int y) {
-    int16_t x1, y1;
-    uint16_t w, h;
-
-    display.getTextBounds(
-        text, 0, 0, &x1, &y1, &w, &h
-    );
-
-    int x = (display.width() - static_cast<int>(w)) / 2 - x1;
-
-    display.setCursor(x, y);
-    display.print(text);
-}
 
 void Draw::drawImage(const unsigned char* image){
     display.drawXBitmap(0, 0, image, 200, 200, GxEPD_BLACK);
@@ -33,8 +18,7 @@ void Draw::drawTime(int x, int y) {
     int winH = digit_height;
     int digitSpacing = 5;
 
-    // Clear only the time area.
-    display.fillRect(winX, winY, winW, winH, GxEPD_WHITE);
+    display.setPartialWindow(winX, winY, winW, winH);
 
     DateTime currentTime = timeManager.getCurrentTime();
 
@@ -43,55 +27,75 @@ void Draw::drawTime(int x, int y) {
     snprintf(timeToString, sizeof(timeToString),
              "%02d%02d", currentTime.hour, currentTime.minute);
 
-    int offset = 0;
+    display.firstPage();
 
-    for (int i = 0; i < 4; i++) {
-        int digit = timeToString[i] - '0';
-        drawDigit(winX + offset, winY, digit, 1);
+    do {
+        display.fillRect(winX, winY, winW, winH, GxEPD_WHITE);
 
-        if (i == 1) {
-            offset += digit_width + 3;
+        int offset = 0;
 
-            display.drawXBitmap(
-                winX + offset,
-                winY + (digit_height - dots_height) / 2,
-                dots,
-                dots_width,
-                dots_height,
-                GxEPD_BLACK
-            );
+        for (int i = 0; i < 4; i++) {
+            int digit = timeToString[i] - '0';
 
-            offset += dots_width + 3;
-        } else {
-            offset += digit_width + digitSpacing;
+            drawDigit(winX + offset, winY, digit, 1);
+
+            if (i == 1) {
+                offset += digit_width + 3;
+
+                display.drawXBitmap(
+                    winX + offset,
+                    winY + (digit_height - dots_height) / 2,
+                    dots,
+                    dots_width,
+                    dots_height,
+                    GxEPD_BLACK
+                );
+
+                offset += dots_width + 3;
+            } else {
+                offset += digit_width + digitSpacing;
+            }
         }
-    }
-}
 
-void Draw::setPartialWindow(int x, int y, int width, int height) {
-    display.setPartialWindow(x, y, width, height);
-}
-
-void Draw::setTimePartial() {
-    setPartialWindow(15, 50, 169, digit_height);
-}
-
-void Draw::setBatteryPartial() {
-    setPartialWindow(15, 130, 190, 40);
+    } while (display.nextPage());
 }
 
 void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
     char buffer[32];
 
-    if(battery.charging){
-        snprintf(buffer, sizeof(buffer), "%d%% %.2fv (CHARGING)", battery.percentage, battery.voltage);
-    }else{
-        snprintf(buffer, sizeof(buffer), "%d%% %.2fv", battery.percentage, battery.voltage);
+    if (battery.charging) {
+        snprintf(buffer, sizeof(buffer),
+                 "%d%% %.2fv (CHARGING)",
+                 battery.percentage, battery.voltage);
+    } else {
+        snprintf(buffer, sizeof(buffer),
+                 "%d%% %.2fv",
+                 battery.percentage, battery.voltage);
     }
-    
 
-    display.setCursor(x, y);
-    display.print(buffer);
+    display.setPartialWindow(15, 130, 190, 40);
+
+    display.firstPage();
+
+    do {
+        display.fillRect(15, 130, 190, 40, GxEPD_WHITE);
+        display.setCursor(x, y);
+        display.print(buffer);
+    } while (display.nextPage());
+}
+
+void Draw::drawDate(int x, int y){
+
+    DateTime currentTime = timeManager.getCurrentTime();
+
+    display.setPartialWindow(15, 160, 190, 40);
+    display.firstPage();
+
+    do {
+        display.setCursor(x, y);
+        display.printf("%d.%d.%d", currentTime.dayNumber, currentTime.monthNumber, currentTime.year);
+    } while (display.nextPage());
+
 }
 /*
 void draw_time(){

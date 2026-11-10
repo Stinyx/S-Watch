@@ -1,12 +1,14 @@
 #include "app/App.h"
 #include "graphics/Draw.h"
 #include "screens/TestScreen.h"
+#include "screens/InitialisingScreen.h"
 #include "services/TimeManager.h"
 #include "services/PowerManager.h"
 
 Draw draw;
 PowerManager powerManager;
 TestScreen testScreen(draw, powerManager);
+InitialisingScreen initialisingScreen(draw);
 Display displayController;
 
 void App::begin() {
@@ -16,14 +18,18 @@ void App::begin() {
     powerManager.init();
 
     if (initial) {
-        // Clear the old firmware's image on first boot.
         display.setFullWindow();
         display.firstPage();
         do {
-            display.fillScreen(GxEPD_WHITE);
+            initialisingScreen.draw();
         } while (display.nextPage());
 
         timeManager.init();
+
+        // FILL SCREEN TO WHITE BEFORE SHOWING CLOCKSCREEN AFTER INIT SCREEN
+        do {
+            display.fillScreen(GxEPD_WHITE);
+        } while (display.nextPage());
     }
 
     update();
