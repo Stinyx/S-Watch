@@ -61,15 +61,21 @@ void Draw::drawTime(int x, int y) {
 }
 
 void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
-    char buffer[32];
+    char buffer[48];
 
     if (battery.charging) {
         snprintf(buffer, sizeof(buffer),
-                 "%d%% %.2fv (CHARGING)",
+                 "%d%% %.2fV *",
                  battery.percentage, battery.voltage);
-    } else {
+    }
+    else if (battery.usbConnected) {
         snprintf(buffer, sizeof(buffer),
-                 "%d%% %.2fv",
+                 "%d%% %.2fV USB ",
+                 battery.percentage, battery.voltage);
+    }
+    else {
+        snprintf(buffer, sizeof(buffer),
+                 "%d%% %.2fV",
                  battery.percentage, battery.voltage);
     }
 
@@ -79,8 +85,10 @@ void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
 
     do {
         display.fillRect(15, 130, 190, 40, GxEPD_WHITE);
+
         display.setCursor(x, y);
         display.print(buffer);
+
     } while (display.nextPage());
 }
 

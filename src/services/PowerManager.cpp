@@ -28,8 +28,9 @@ float PowerManager::readVoltage() {
 }
 
 int PowerManager::calculatePercentage(float voltage) {
+    // Map 3.2V to 0% and 3.91V to 100%.
     int percentage = (int)(
-        (voltage - 3.2f) / (4.2f - 3.2f) * 100.0f
+        (voltage - 3.2f) / (3.91f - 3.2f) * 100.0f
     );
 
     return constrain(percentage, 0, 100);
@@ -40,7 +41,7 @@ BatteryInfo PowerManager::getBatteryInfo() {
 
     info.voltage = readVoltage();
     info.percentage = calculatePercentage(info.voltage);
-    info.charging = digitalRead(CHARGING_STATUS_PIN) == LOW;
+    info.charging = info.usbConnected && digitalRead(CHARGING_STATUS_PIN) == LOW;
     info.usbConnected = digitalRead(USB_DETECT_PIN) == HIGH;
 
     return info;
