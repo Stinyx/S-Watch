@@ -5,4 +5,5 @@
 class InfoScreen : public Screen {
 public:
     void draw() override;
+    void update() override;
 };

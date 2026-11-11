@@ -15,12 +15,12 @@ void MainMenuScreen::handleInput(Input input) {
     switch (input) {
         case Input::Up:
             selected = (selected + ITEM_COUNT - 1) % ITEM_COUNT;
-            draw();
+            update();
             break;
 
         case Input::Down:
             selected = (selected + 1) % ITEM_COUNT;
-            draw();
+            update();
             break;
 
         case Input::Select:
@@ -33,6 +33,40 @@ void MainMenuScreen::handleInput(Input input) {
 }
 
 void MainMenuScreen::draw() {
+    display.setFullWindow();
+    display.firstPage();
+
+    do {
+        display.fillScreen(GxEPD_WHITE);
+
+        display.setFont(nullptr);
+        display.setTextSize(2);
+        display.setTextColor(GxEPD_BLACK);
+
+        display.setCursor(15, 25);
+        display.print("MENU");
+
+        display.setTextSize(1);
+
+        for (int i = 0; i < ITEM_COUNT; i++) {
+            int y = 65 + i * 40;
+
+            if (i == selected) {
+                display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
+                display.setCursor(18, y + 4);
+                display.print("> ");
+            } else {
+                display.setCursor(18, y + 4);
+                display.print("  ");
+            }
+
+            display.print(menuItems[i]);
+        }
+
+    } while (display.nextPage());
+}
+
+void MainMenuScreen::update() {
     display.setPartialWindow(0, 0, 200, 200);
     display.firstPage();
 

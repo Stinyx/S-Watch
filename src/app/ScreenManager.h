@@ -12,6 +12,8 @@ public:
 
         activeScreen = &next;
         activeScreen->enter();
+
+        // Full refresh when changing screens
         activeScreen->draw();
     }
 
@@ -38,7 +40,7 @@ public:
     }
 
     bool isOnWatchFace() const {
-    return activeScreen == watchFace;
+        return activeScreen == watchFace;
     }
 
     bool isActive(const Screen& screen) const {

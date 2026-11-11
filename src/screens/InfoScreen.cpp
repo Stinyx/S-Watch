@@ -27,3 +27,7 @@ void InfoScreen::draw() {
 
     } while (display.nextPage());
 }
+
+void InfoScreen::update(){
+    // stuff
+}

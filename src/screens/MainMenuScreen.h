@@ -7,6 +7,7 @@ public:
     void enter() override;
     void handleInput(Input input) override;
     void draw() override;
+    void update() override;
 
     int getSelection() const;
     bool consumeSelection();
