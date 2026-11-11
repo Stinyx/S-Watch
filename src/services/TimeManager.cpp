@@ -178,10 +178,10 @@ DateTime TimeManager::getDateTime() const{
   time.hour = timeinfo.tm_hour;
   time.minute = timeinfo.tm_min;
   time.second = timeinfo.tm_sec;
-  time.dayNumber = timeinfo.tm_wday;
+  time.dayNumber = timeinfo.tm_mday;
   time.dayText = "IDK";
   time.year = timeinfo.tm_year + 1900;
-  time.monthNumber = timeinfo.tm_mday;
+  time.monthNumber = timeinfo.tm_mon + 1;
   time.monthText = "IDK";
 
   WiFi.disconnect(true);

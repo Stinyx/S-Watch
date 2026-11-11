@@ -33,10 +33,15 @@ public:
         }
     }
 
+    void setWatchFace(Screen& screen) {
+        watchFace = &screen;
+    }
+
     bool isOnWatchFace() const {
     return activeScreen == watchFace;
     }
 
 private:
     Screen* activeScreen = nullptr;
+    Screen* watchFace = nullptr;
 };

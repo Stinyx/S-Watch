@@ -21,6 +21,10 @@ void App::begin() {
     bool timerWake = (cause == ESP_SLEEP_WAKEUP_TIMER);
     bool buttonWake = (cause == ESP_SLEEP_WAKEUP_EXT1);
 
+    displayController.init();
+    powerManager.init();
+    buttons.init();
+
     if (coldBoot) {
         display.setFullWindow();
         display.firstPage();
@@ -30,45 +34,25 @@ void App::begin() {
 
         timeManager.init();
 
-        // FILL SCREEN TO WHITE BEFORE SHOWING CLOCKSCREEN AFTER INIT SCREEN
         do {
             display.fillScreen(GxEPD_WHITE);
         } while (display.nextPage());
+    }else if (timerWake) {
+        timeManager.update();
     }
-    else if (timerWake) {
-        update();
-    }
-    else if (buttonWake) {
+    
+    screenManager.setWatchFace(testScreen);
+
+    if (buttonWake) {
         // User pressed a button.
     }
 
-    displayController.init();
-    powerManager.init();
-
-    
+    screenManager.setScreen(testScreen);
 }
 
 void App::update() {
     timeManager.update();
-
-    // TestScreen handles both partial refreshes.
-    testScreen.draw();
-
-    display.hibernate();
-
-    struct tm timeinfo;
-    int secondsToSleep = 60;
-
-    if (getLocalTime(&timeinfo, 1000)) {
-        secondsToSleep = 60 - timeinfo.tm_sec;
-        if (secondsToSleep <= 0) secondsToSleep = 60;
-    }
-
-    esp_sleep_enable_timer_wakeup(
-        (uint64_t)secondsToSleep * 1000000ULL
-    );
-
-    esp_deep_sleep_start();
+    screenManager.draw();
 }
 
 void App::sleepUntilNextMinute() {
@@ -79,9 +63,8 @@ void App::sleepUntilNextMinute() {
 
     if (getLocalTime(&timeinfo, 1000)) {
         secondsToSleep = 60 - timeinfo.tm_sec;
-        if (secondsToSleep <= 0) {
+        if (secondsToSleep <= 0)
             secondsToSleep = 60;
-        }
     }
 
     esp_sleep_enable_timer_wakeup(
@@ -89,7 +72,6 @@ void App::sleepUntilNextMinute() {
     );
 
     buttons.enableWakeup();
-
     esp_deep_sleep_start();
 }
 
@@ -98,8 +80,11 @@ void App::loop() {
 
     if (input != Input::None) {
         screenManager.handleInput(input);
-        // Reset your inactivity timer here.
     }
 
     screenManager.update();
+
+    if (screenManager.isOnWatchFace()) {
+        sleepUntilNextMinute();
+    }
 }

@@ -24,10 +24,32 @@ void Button::init() {
 }
 
 Input Button::readInput() {
-    if (digitalRead(MENU_PIN) == LOW) return Input::Select;
-    if (digitalRead(BACK_PIN) == LOW) return Input::Back;
-    if (digitalRead(UP_PIN) == LOW) return Input::Up;
-    if (digitalRead(DOWN_PIN) == LOW) return Input::Down;
+    Input current = Input::None;
+
+    if (digitalRead(MENU_PIN) == LOW)
+        current = Input::Select;
+    else if (digitalRead(BACK_PIN) == LOW)
+        current = Input::Back;
+    else if (digitalRead(UP_PIN) == LOW)
+        current = Input::Up;
+    else if (digitalRead(DOWN_PIN) == LOW)
+        current = Input::Down;
+
+    if (current != candidateInput) {
+        candidateInput = current;
+        lastChange = millis();
+        return Input::None;
+    }
+
+    if (millis() - lastChange < 40)
+        return Input::None;
+
+    if (current != lastInput) {
+        lastInput = current;
+
+        if (current != Input::None)
+            return current;
+    }
 
     return Input::None;
 }
