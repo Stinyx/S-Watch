@@ -39,12 +39,10 @@ void App::begin() {
         do {
             display.fillScreen(GxEPD_WHITE);
         } while (display.nextPage());
-        
-    }else if (timerWake) {
+
+    } else if (timerWake || buttonWake) {
         timeManager.update();
     }
-    
-    screenManager.setWatchFace(testScreen);
 
     Input wakeInput = Input::None;
 
