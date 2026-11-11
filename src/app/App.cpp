@@ -34,9 +34,12 @@ void App::begin() {
 
         timeManager.init();
 
+        display.setFullWindow();
+        display.firstPage();
         do {
             display.fillScreen(GxEPD_WHITE);
         } while (display.nextPage());
+        
     }else if (timerWake) {
         timeManager.update();
     }
@@ -45,9 +48,15 @@ void App::begin() {
 
     Input wakeInput = Input::None;
 
+    screenManager.setWatchFace(testScreen);
+
+    if (buttonWake) {
+        wakeInput = buttons.getWakeupInput();
+    }
+
     screenManager.setScreen(testScreen);
 
-    if (buttonWake && wakeInput != Input::None) {
+    if (wakeInput != Input::None) {
         screenManager.handleInput(wakeInput);
     }
 }
