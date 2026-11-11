@@ -41,6 +41,10 @@ public:
     return activeScreen == watchFace;
     }
 
+    bool isActive(const Screen& screen) const {
+        return activeScreen == &screen;
+    }
+
 private:
     Screen* activeScreen = nullptr;
     Screen* watchFace = nullptr;

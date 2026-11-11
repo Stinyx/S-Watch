@@ -2,23 +2,18 @@
 
 #include "app/Screen.h"
 
-class ScreenManager;
-class TestScreen;
-class InitialisingScreen;
-
-class MainMenu : public Screen {
+class MainMenuScreen : public Screen {
 public:
-    MainMenu(ScreenManager& manager,
-             TestScreen& watchFace,
-             InitialisingScreen& initialisingScreen);
-
     void enter() override;
     void handleInput(Input input) override;
     void draw() override;
 
+    int getSelection() const;
+    bool consumeSelection();
+
 private:
-    ScreenManager& manager;
-    TestScreen& watchFace;
-    InitialisingScreen& initialisingScreen;
-    int selectedItem = 0;
+    int selected = 0;
+    bool selectionMade = false;
+
+    static constexpr int ITEM_COUNT = 2;
 };

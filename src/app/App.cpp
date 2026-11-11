@@ -5,6 +5,8 @@
 #include "services/TimeManager.h"
 #include "services/PowerManager.h"
 #include "hardware/Button.h"
+#include "screens/MainMenuScreen.h"
+#include "screens/InfoScreen.h"
 
 Draw draw;
 PowerManager powerManager;
@@ -13,6 +15,53 @@ InitialisingScreen initialisingScreen(draw);
 Display displayController;
 Button buttons;
 ScreenManager screenManager;
+MainMenuScreen menuScreen;
+InfoScreen infoScreen;
+
+static unsigned long lastActivity = 0;
+static constexpr unsigned long MENU_TIMEOUT = 15000;
+
+static void handleButtonInput(Input input) {
+    if (input == Input::None) return;
+
+    lastActivity = millis();
+
+    if (screenManager.isOnWatchFace()) {
+        if (input == Input::Select) {
+            screenManager.setScreen(menuScreen);
+        }
+        return;
+    }
+
+    if (screenManager.isActive(menuScreen)) {
+        if (input == Input::Back) {
+            screenManager.setScreen(testScreen);
+            return;
+        }
+
+        menuScreen.handleInput(input);
+
+        if (menuScreen.consumeSelection()) {
+            switch (menuScreen.getSelection()) {
+                case 0:
+                    screenManager.setScreen(testScreen);
+                    break;
+
+                case 1:
+                    screenManager.setScreen(infoScreen);
+                    break;
+            }
+        }
+
+        return;
+    }
+
+    if (screenManager.isActive(infoScreen)) {
+        if (input == Input::Back) {
+            screenManager.setScreen(menuScreen);
+        }
+    }
+}
 
 void App::begin() {
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
@@ -25,9 +74,11 @@ void App::begin() {
     powerManager.init();
     buttons.init();
 
+    // Initialize the clock on first boot.
     if (coldBoot) {
         display.setFullWindow();
         display.firstPage();
+
         do {
             initialisingScreen.draw();
         } while (display.nextPage());
@@ -36,26 +87,27 @@ void App::begin() {
 
         display.setFullWindow();
         display.firstPage();
+
         do {
             display.fillScreen(GxEPD_WHITE);
         } while (display.nextPage());
+    }
 
-    } else if (timerWake || buttonWake) {
+    // Restore the current time after every deep-sleep wake.
+    else if (timerWake || buttonWake) {
         timeManager.update();
     }
 
-    Input wakeInput = Input::None;
-
+    // Register the watch face and available screens.
     screenManager.setWatchFace(testScreen);
-
-    if (buttonWake) {
-        wakeInput = buttons.getWakeupInput();
-    }
-
     screenManager.setScreen(testScreen);
 
-    if (wakeInput != Input::None) {
-        screenManager.handleInput(wakeInput);
+    lastActivity = millis();
+
+    // Process the button that woke the watch.
+    if (buttonWake) {
+        Input wakeInput = buttons.getWakeupInput();
+        handleButtonInput(wakeInput);
     }
 }
 
@@ -88,10 +140,16 @@ void App::loop() {
     Input input = buttons.readInput();
 
     if (input != Input::None) {
-        screenManager.handleInput(input);
+        handleButtonInput(input);
     }
 
     screenManager.update();
+
+    if (!screenManager.isOnWatchFace()) {
+        if (millis() - lastActivity >= MENU_TIMEOUT) {
+            screenManager.setScreen(testScreen);
+        }
+    }
 
     if (screenManager.isOnWatchFace()) {
         sleepUntilNextMinute();
