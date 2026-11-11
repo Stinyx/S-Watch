@@ -8,14 +8,14 @@ void InfoScreen::draw() {
     do {
         display.fillScreen(GxEPD_WHITE);
 
-        display.setFont(nullptr);
-        display.setTextSize(2);
+        //display.setFont(nullptr);
+        //display.setTextSize(2);
         display.setTextColor(GxEPD_BLACK);
 
         display.setCursor(15, 30);
         display.print("DEVICE INFO");
 
-        display.setTextSize(1);
+        //display.setTextSize(1);
         display.setCursor(15, 70);
         display.print("S-Watch");
 
