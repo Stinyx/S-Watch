@@ -26,10 +26,10 @@ class DateTime{
         int minute;
         int second;
         int dayNumber;
-        char* dayText;
+        const char* dayText = "NONE";
         int year;
         int monthNumber;
-        char* monthText;
+        const char* monthText = "NONE";
 };
 
 

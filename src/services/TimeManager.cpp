@@ -143,9 +143,7 @@ DateTime TimeManager::getDateTime() const{
       WiFi.mode(WIFI_OFF);
 
       // Return a zero-initialized DateTime.
-      DateTime time = {};
-      time.dayText = (char*)"NONE";
-      time.monthText = (char*)"NONE";
+      time = {};
       return time;
   }
 
@@ -164,11 +162,8 @@ DateTime TimeManager::getDateTime() const{
     time.hour = 0;
     time.minute = 0;
     time.second = 0;
-    time.dayNumber;
-    time.dayText = "NONE";
     time.year = 0;
     time.monthNumber = 0;
-    time.monthText = "NONE";
 
     return time;
   }

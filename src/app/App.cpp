@@ -43,10 +43,12 @@ void App::begin() {
     
     screenManager.setWatchFace(testScreen);
 
-    if (buttonWake) {
-        // User pressed a button.
-    }
+    Input wakeInput = Input::None;
 
+    if (buttonWake) {
+        wakeInput = buttons.getWakeupInput();
+    }
+    
     screenManager.setScreen(testScreen);
 }
 

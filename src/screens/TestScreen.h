@@ -3,7 +3,7 @@
 
 #include "app/Screen.h"
 #include "graphics/Draw.h"
-//#include "watchfaces/MinimalWatchFace.h"
+#include "services/PowerManager.h"
 
 class TestScreen : public Screen {
 public:

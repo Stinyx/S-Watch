@@ -92,18 +92,24 @@ void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
     } while (display.nextPage());
 }
 
-void Draw::drawDate(int x, int y){
-
+void Draw::drawDate(int x, int y) {
     DateTime currentTime = timeManager.getCurrentTime();
 
     display.setPartialWindow(15, 160, 190, 40);
     display.firstPage();
 
     do {
-        display.setCursor(x, y);
-        display.printf("%d.%d.%d", currentTime.dayNumber, currentTime.monthNumber, currentTime.year);
-    } while (display.nextPage());
+        display.fillRect(15, 160, 190, 40, GxEPD_WHITE);
 
+        display.setCursor(x, y);
+        display.printf(
+            "%d.%d.%d",
+            currentTime.dayNumber,
+            currentTime.monthNumber,
+            currentTime.year
+        );
+
+    } while (display.nextPage());
 }
 /*
 void draw_time(){
