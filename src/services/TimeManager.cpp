@@ -159,12 +159,7 @@ DateTime TimeManager::getDateTime() const{
     WiFi.disconnect(true);
     WiFi.mode(WIFI_OFF);
 
-    time.hour = 0;
-    time.minute = 0;
-    time.second = 0;
-    time.year = 0;
-    time.monthNumber = 0;
-
+    time = {};
     return time;
   }
   

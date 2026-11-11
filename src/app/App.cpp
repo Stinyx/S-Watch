@@ -45,11 +45,11 @@ void App::begin() {
 
     Input wakeInput = Input::None;
 
-    if (buttonWake) {
-        wakeInput = buttons.getWakeupInput();
-    }
-    
     screenManager.setScreen(testScreen);
+
+    if (buttonWake && wakeInput != Input::None) {
+        screenManager.handleInput(wakeInput);
+    }
 }
 
 void App::update() {

@@ -22,13 +22,13 @@ void sync_ntp();
 
 class DateTime{
     public:
-        int hour;
-        int minute;
-        int second;
-        int dayNumber;
+        int hour = 0;
+        int minute = 0;
+        int second = 0;
+        int dayNumber = 0;
         const char* dayText = "NONE";
-        int year;
-        int monthNumber;
+        int year = 0;
+        int monthNumber = 0;
         const char* monthText = "NONE";
 };
 
