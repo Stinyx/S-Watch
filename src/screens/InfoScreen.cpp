@@ -1,33 +1,23 @@
 #include "InfoScreen.h"
 #include "hardware/Display.h"
 
+InfoScreen::InfoScreen(Draw& drawing)
+    : drawing(drawing){}
+
 void InfoScreen::draw() {
-    display.setPartialWindow(0, 0, 200, 200);
+    display.setFullWindow();
     display.firstPage();
 
     do {
         display.fillScreen(GxEPD_WHITE);
-
-        //display.setFont(nullptr);
-        //display.setTextSize(2);
-        display.setTextColor(GxEPD_BLACK);
-
-        display.setCursor(15, 30);
-        display.print("DEVICE INFO");
-
-        //display.setTextSize(1);
-        display.setCursor(15, 70);
-        display.print("S-Watch");
-
-        display.setCursor(15, 95);
-        display.print("ESP32-S3");
-
-        display.setCursor(15, 160);
-        display.print("BACK to menu");
+        drawing.drawText("DEVICE INFO", 15, 30);
+        drawing.drawText("S-Watch", 15, 70);
+        drawing.drawText("ESP32-S3", 15, 95);
+        drawing.drawText("BACK to menu", 15, 160);
 
     } while (display.nextPage());
 }
 
 void InfoScreen::update(){
-    // stuff
+    // nothing needed
 }

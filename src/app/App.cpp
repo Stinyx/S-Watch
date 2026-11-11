@@ -1,6 +1,6 @@
 #include "app/App.h"
 #include "graphics/Draw.h"
-#include "screens/TestScreen.h"
+#include "screens/ClockScreen.h"
 #include "screens/InitialisingScreen.h"
 #include "services/TimeManager.h"
 #include "services/PowerManager.h"
@@ -8,15 +8,20 @@
 #include "screens/MainMenuScreen.h"
 #include "screens/InfoScreen.h"
 
+// GRAPHICS
 Draw draw;
+
+// HARDWARE
 PowerManager powerManager;
-TestScreen testScreen(draw, powerManager);
-InitialisingScreen initialisingScreen(draw);
 Display displayController;
 Button buttons;
+
+// INDIVIDUAL SCREENS + SCREEN MANAGER
 ScreenManager screenManager;
-MainMenuScreen menuScreen;
-InfoScreen infoScreen;
+ClockScreen clockScreen(draw, powerManager);
+InitialisingScreen initialisingScreen(draw);
+MainMenuScreen menuScreen(draw);
+InfoScreen infoScreen(draw);
 
 static unsigned long lastActivity = 0;
 static constexpr unsigned long MENU_TIMEOUT = 15000;
@@ -35,7 +40,7 @@ static void handleButtonInput(Input input) {
 
     if (screenManager.isActive(menuScreen)) {
         if (input == Input::Back) {
-            screenManager.setScreen(testScreen);
+            screenManager.setScreen(clockScreen);
             return;
         }
 
@@ -44,7 +49,7 @@ static void handleButtonInput(Input input) {
         if (menuScreen.consumeSelection()) {
             switch (menuScreen.getSelection()) {
                 case 0:
-                    screenManager.setScreen(testScreen);
+                    screenManager.setScreen(clockScreen);
                     break;
 
                 case 1:
@@ -99,8 +104,8 @@ void App::begin() {
     }
 
     // Register the watch face and available screens.
-    screenManager.setWatchFace(testScreen);
-    screenManager.setScreen(testScreen);
+    screenManager.setWatchFace(clockScreen);
+    screenManager.setScreen(clockScreen);
 
     lastActivity = millis();
 
@@ -148,7 +153,7 @@ void App::loop() {
 
     if (!screenManager.isOnWatchFace()) {
         if (millis() - lastActivity >= MENU_TIMEOUT) {
-            screenManager.setScreen(testScreen);
+            screenManager.setScreen(clockScreen);
         }
     }
 

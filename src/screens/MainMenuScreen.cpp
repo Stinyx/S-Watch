@@ -6,6 +6,9 @@ static const char* menuItems[] = {
     "Device info"
 };
 
+MainMenuScreen::MainMenuScreen(Draw& drawing)
+    : drawing(drawing){}
+
 void MainMenuScreen::enter() {
     selected = 0;
     selectionMade = false;
@@ -38,26 +41,16 @@ void MainMenuScreen::draw() {
 
     do {
         display.fillScreen(GxEPD_WHITE);
-
-        //display.setFont(nullptr);
-        //display.setTextSize(2);
-        //display.setTextColor(GxEPD_BLACK);
-
-        display.setCursor(15, 25);
-        display.print("MENU");
-
-        //display.setTextSize(1);
+        drawing.drawText("MENU", 15, 25);
 
         for (int i = 0; i < ITEM_COUNT; i++) {
             int y = 65 + i * 40;
 
             if (i == selected) {
                 display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
-                display.setCursor(18, y + 4);
-                display.print("> ");
+                drawing.drawText("> ", 18, y + 4);
             } else {
-                display.setCursor(18, y + 4);
-                display.print("  ");
+                drawing.drawText("  ", 18, y + 4);
             }
 
             display.print(menuItems[i]);
@@ -77,23 +70,14 @@ void MainMenuScreen::update() {
         // Clear only the menu-item area
         display.fillRect(0, 45, 200, 85, GxEPD_WHITE);
 
-        //display.setFont(nullptr);
-        //display.setTextSize(1);
-        //display.setTextColor(GxEPD_BLACK);
-
         for (int i = 0; i < ITEM_COUNT; i++) {
             int y = 65 + i * 40;
 
             if (i == selected) {
-                display.drawRect(
-                    10, y - 15, 180, 30, GxEPD_BLACK
-                );
-
-                display.setCursor(18, y + 4);
-                display.print("> ");
+                display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
+                drawing.drawText("> ", 18, y + 4);
             } else {
-                display.setCursor(18, y + 4);
-                display.print("  ");
+                drawing.drawText("  ", 18, y + 4);
             }
 
             display.print(menuItems[i]);
