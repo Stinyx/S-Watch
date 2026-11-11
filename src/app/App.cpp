@@ -4,20 +4,24 @@
 #include "screens/InitialisingScreen.h"
 #include "services/TimeManager.h"
 #include "services/PowerManager.h"
+#include "hardware/Button.h"
 
 Draw draw;
 PowerManager powerManager;
 TestScreen testScreen(draw, powerManager);
 InitialisingScreen initialisingScreen(draw);
 Display displayController;
+Button buttons;
+ScreenManager screenManager;
 
 void App::begin() {
-    bool initial = esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER;
+    esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
 
-    displayController.init(initial);
-    powerManager.init();
+    bool coldBoot = (cause == ESP_SLEEP_WAKEUP_UNDEFINED);
+    bool timerWake = (cause == ESP_SLEEP_WAKEUP_TIMER);
+    bool buttonWake = (cause == ESP_SLEEP_WAKEUP_EXT1);
 
-    if (initial) {
+    if (coldBoot) {
         display.setFullWindow();
         display.firstPage();
         do {
@@ -31,8 +35,17 @@ void App::begin() {
             display.fillScreen(GxEPD_WHITE);
         } while (display.nextPage());
     }
+    else if (timerWake) {
+        update();
+    }
+    else if (buttonWake) {
+        // User pressed a button.
+    }
 
-    update();
+    displayController.init();
+    powerManager.init();
+
+    
 }
 
 void App::update() {
@@ -56,4 +69,37 @@ void App::update() {
     );
 
     esp_deep_sleep_start();
+}
+
+void App::sleepUntilNextMinute() {
+    display.hibernate();
+
+    struct tm timeinfo;
+    int secondsToSleep = 60;
+
+    if (getLocalTime(&timeinfo, 1000)) {
+        secondsToSleep = 60 - timeinfo.tm_sec;
+        if (secondsToSleep <= 0) {
+            secondsToSleep = 60;
+        }
+    }
+
+    esp_sleep_enable_timer_wakeup(
+        (uint64_t)secondsToSleep * 1000000ULL
+    );
+
+    buttons.enableWakeup();
+
+    esp_deep_sleep_start();
+}
+
+void App::loop() {
+    Input input = buttons.readInput();
+
+    if (input != Input::None) {
+        screenManager.handleInput(input);
+        // Reset your inactivity timer here.
+    }
+
+    screenManager.update();
 }

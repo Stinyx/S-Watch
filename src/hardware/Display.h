@@ -6,5 +6,5 @@
 
 class Display {
 public:
-    void init(bool initial);
+    void init();
 };

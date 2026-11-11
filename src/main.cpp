@@ -150,5 +150,5 @@ void setup() {
 }
 
 void loop(){
-  // Empty cause idk
+  app.loop();
 }

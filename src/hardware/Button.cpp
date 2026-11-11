@@ -1,36 +1,56 @@
+
 #include "Button.h"
 
-// Button2 setup (Input)
-void Button::Init(){ 
-  button1.begin(BUTTON_PIN1, INPUT_PULLDOWN, false);
-  button2.begin(BUTTON_PIN2, INPUT_PULLDOWN, false);
-  button3.begin(BUTTON_PIN3, INPUT_PULLDOWN, false);
+#include <Arduino.h>
+#include <esp_sleep.h>
+#include <driver/rtc_io.h>
+
+#define MENU_PIN 7
+#define BACK_PIN 6
+#define UP_PIN   0
+#define DOWN_PIN 8
+
+static constexpr uint64_t BUTTON_MASK =
+    (1ULL << MENU_PIN) |
+    (1ULL << BACK_PIN) |
+    (1ULL << UP_PIN) |
+    (1ULL << DOWN_PIN);
+
+void Button::init() {
+    pinMode(MENU_PIN, INPUT_PULLUP);
+    pinMode(BACK_PIN, INPUT_PULLUP);
+    pinMode(UP_PIN, INPUT_PULLUP);
+    pinMode(DOWN_PIN, INPUT_PULLUP);
 }
 
-// Button loop
-void Button::Update(){
-  button1.loop();
-  button2.loop();
-  button3.loop();
+Input Button::readInput() {
+    if (digitalRead(MENU_PIN) == LOW) return Input::Select;
+    if (digitalRead(BACK_PIN) == LOW) return Input::Back;
+    if (digitalRead(UP_PIN) == LOW) return Input::Up;
+    if (digitalRead(DOWN_PIN) == LOW) return Input::Down;
+
+    return Input::None;
 }
 
-/*
-// Button logic, might change in the future since 4 buttons are planned
-void button_handler_init(){ 
+Input Button::getWakeupInput() {
+    if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_EXT1) {
+        return Input::None;
+    }
 
-  //Button 1 logic
-  button1.setLongClickHandler([](Button2& b){set_current_state(NTPSYNCING);});
-  button1.setClickHandler([](Button2& b){scrollable_menu_down();});
-  button1.setTripleClickHandler([](Button2& b){set_current_state(SETTINGS);});
+    uint64_t wakePins = esp_sleep_get_ext1_wakeup_status();
 
-  //Button 2 logic
-  button2.setLongClickHandler([](Button2& b){set_current_state(CLOCK);}); 
-  button2.setClickHandler([](Button2& b){scrollable_menu_up();});
-  button2.setDoubleClickHandler([](Button2& b){scrollable_menu_apply();});
+    if (wakePins & (1ULL << MENU_PIN)) return Input::Select;
+    if (wakePins & (1ULL << BACK_PIN)) return Input::Back;
+    if (wakePins & (1ULL << UP_PIN)) return Input::Up;
+    if (wakePins & (1ULL << DOWN_PIN)) return Input::Down;
 
-  //Button 3 logic
-  button3.setTripleClickHandler([](Button2& b){set_current_state(NAVIGATION);});
+    return Input::None;
 }
-*/
 
-// Check if each of the buttons has been pressed or not
+void Button::enableWakeup() {
+    // Buttons are active LOW.
+    esp_sleep_enable_ext1_wakeup(
+        BUTTON_MASK,
+        ESP_EXT1_WAKEUP_ANY_LOW
+    );
+}

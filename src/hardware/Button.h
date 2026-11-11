@@ -1,22 +1,18 @@
 #pragma once
 
-// Button2 library for managing buttons
-#include "Button2.h"
+#include "app/Input.h"
 
-#define BUTTON_PIN1 33
-#define BUTTON_PIN2 32
-#define BUTTON_PIN3 35
-
-class Button{
-private:
-    /* data */
+class Button {
 public:
-    Button(/* args */);
-    ~Button();
-    void Init();
-    void Update();
-    Button2 button1;
-    Button2 button2;
-    Button2 button3;
+    void init();
+
+    // Returns the button that woke the watch, if any.
+    Input getWakeupInput();
+
+    // Reads buttons while the watch is already awake.
+    Input readInput();
+
+    // Configure buttons as deep-sleep wake sources.
+    void enableWakeup();
 };
 

@@ -11,6 +11,8 @@ public:
     ~App() = default;
     void begin();
     void update();
+    void loop();
+    void sleepUntilNextMinute();
 
 private:
 /*

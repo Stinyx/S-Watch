@@ -33,6 +33,10 @@ public:
         }
     }
 
+    bool isOnWatchFace() const {
+    return activeScreen == watchFace;
+    }
+
 private:
     Screen* activeScreen = nullptr;
 };
