@@ -7,7 +7,7 @@ GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, 200> display(
 void Display::init() {
     SPI.begin(47, 46, 48, 33);
 
-    display.init(115200, false);
+    display.init(115200, false, 2, true);
     display.setRotation(0);
     display.setFont(&FreeMonoBold9pt7b);
     display.setTextColor(GxEPD_BLACK);

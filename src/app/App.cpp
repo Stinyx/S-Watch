@@ -113,7 +113,7 @@ void App::begin() {
 
 void App::update() {
     timeManager.update();
-    screenManager.draw();
+    screenManager.update();
 }
 
 void App::sleepUntilNextMinute() {
@@ -143,7 +143,8 @@ void App::loop() {
         handleButtonInput(input);
     }
 
-    screenManager.update();
+    // Do not refresh the screen continuously here.
+    // Individual screens call update() when something changes.
 
     if (!screenManager.isOnWatchFace()) {
         if (millis() - lastActivity >= MENU_TIMEOUT) {

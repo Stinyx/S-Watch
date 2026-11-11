@@ -39,14 +39,14 @@ void MainMenuScreen::draw() {
     do {
         display.fillScreen(GxEPD_WHITE);
 
-        display.setFont(nullptr);
-        display.setTextSize(2);
-        display.setTextColor(GxEPD_BLACK);
+        //display.setFont(nullptr);
+        //display.setTextSize(2);
+        //display.setTextColor(GxEPD_BLACK);
 
         display.setCursor(15, 25);
         display.print("MENU");
 
-        display.setTextSize(1);
+        //display.setTextSize(1);
 
         for (int i = 0; i < ITEM_COUNT; i++) {
             int y = 65 + i * 40;
@@ -66,27 +66,29 @@ void MainMenuScreen::draw() {
     } while (display.nextPage());
 }
 
+
 void MainMenuScreen::update() {
-    display.setPartialWindow(0, 0, 200, 200);
+    // Refresh only the menu-item area
+    display.setPartialWindow(0, 45, 200, 85);
+
     display.firstPage();
 
     do {
-        display.fillScreen(GxEPD_WHITE);
+        // Clear only the menu-item area
+        display.fillRect(0, 45, 200, 85, GxEPD_WHITE);
 
-        display.setFont(nullptr);
-        display.setTextSize(2);
-        display.setTextColor(GxEPD_BLACK);
-
-        display.setCursor(15, 25);
-        display.print("MENU");
-
-        display.setTextSize(1);
+        //display.setFont(nullptr);
+        //display.setTextSize(1);
+        //display.setTextColor(GxEPD_BLACK);
 
         for (int i = 0; i < ITEM_COUNT; i++) {
             int y = 65 + i * 40;
 
             if (i == selected) {
-                display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
+                display.drawRect(
+                    10, y - 15, 180, 30, GxEPD_BLACK
+                );
+
                 display.setCursor(18, y + 4);
                 display.print("> ");
             } else {
@@ -99,6 +101,7 @@ void MainMenuScreen::update() {
 
     } while (display.nextPage());
 }
+
 
 int MainMenuScreen::getSelection() const {
     return selected;

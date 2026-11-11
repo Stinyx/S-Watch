@@ -7,12 +7,19 @@ TestScreen::TestScreen(Draw& drawing, PowerManager& power)
     : drawing(drawing), power(power) {}
 
 void TestScreen::draw() {
-    BatteryInfo battery = power.getBatteryInfo();
+    display.setFullWindow();
 
-    drawing.drawTime(0, 0);
-    drawing.drawBattery(battery, 20, 150);
-    drawing.drawDate(20, 180);
+    display.firstPage();
+    do {
+        display.fillScreen(GxEPD_WHITE);
 
+        BatteryInfo battery = power.getBatteryInfo();
+
+        drawing.drawTime(0, 0);
+        drawing.drawBattery(battery, 20, 150);
+        drawing.drawDate(20, 180);
+
+    } while (display.nextPage());
 }
 
 void TestScreen::enter() {}
