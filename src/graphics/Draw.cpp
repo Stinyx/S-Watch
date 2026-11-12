@@ -11,7 +11,7 @@ void Draw::drawDigit(int x, int y, int digit, int style){
     display.drawXBitmap(x, y, clockStyles[style][digit], digit_width, digit_height, GxEPD_BLACK);
 }
 
-void drawText(char *text, int x, int y){
+void Draw::drawText(char *text, int x, int y){
     display.setCursor(x, y);
     display.printf("%s", text);
 }
