@@ -40,7 +40,7 @@ void MainMenuScreen::draw() {
     display.firstPage();
 
     do {
-        display.fillScreen(GxEPD_WHITE);
+        drawing.fill(FULLSCREEN);
         drawing.drawText("MENU", 15, 25);
 
         for (int i = 0; i < ITEM_COUNT; i++) {
@@ -61,15 +61,12 @@ void MainMenuScreen::draw() {
 
 
 void MainMenuScreen::update() {
-    // Refresh only the menu-item area
-    display.setPartialWindow(0, 45, 200, 85);
 
+    drawing.setPartial(0, 45, 200, 85);
     display.firstPage();
-
-    do {
-        // Clear only the menu-item area
-        display.fillRect(0, 45, 200, 85, GxEPD_WHITE);
-
+    do{
+        drawing.fill(0, 45, 200, 85);
+        
         for (int i = 0; i < ITEM_COUNT; i++) {
             int y = 65 + i * 40;
 
@@ -83,7 +80,8 @@ void MainMenuScreen::update() {
             display.print(menuItems[i]);
         }
 
-    } while (display.nextPage());
+    }while(display.nextPage());       
+
 }
 
 

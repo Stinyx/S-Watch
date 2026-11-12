@@ -9,7 +9,7 @@ void InfoScreen::draw() {
     display.firstPage();
 
     do {
-        display.fillScreen(GxEPD_WHITE);
+        drawing.fill(FULLSCREEN);
         drawing.drawText("DEVICE INFO", 15, 30);
         drawing.drawText("S-Watch", 15, 70);
         drawing.drawText("ESP32-S3", 15, 95);

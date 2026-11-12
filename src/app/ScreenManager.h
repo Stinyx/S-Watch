@@ -5,6 +5,12 @@
 
 class ScreenManager {
 public:
+
+    void setInitialScreen(Screen& screen) {
+        activeScreen = &screen;
+        activeScreen->enter();
+    }
+
     void setScreen(Screen& next) {
         if (activeScreen == &next) {
             return;

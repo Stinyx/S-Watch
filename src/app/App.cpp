@@ -103,16 +103,24 @@ void App::begin() {
         timeManager.update();
     }
 
-    // Register the watch face and available screens.
     screenManager.setWatchFace(clockScreen);
-    screenManager.setScreen(clockScreen);
+    screenManager.setInitialScreen(clockScreen);
 
     lastActivity = millis();
 
-    // Process the button that woke the watch.
     if (buttonWake) {
         Input wakeInput = buttons.getWakeupInput();
-        handleButtonInput(wakeInput);
+
+        if (wakeInput == Input::Select) {
+            // Go straight to the menu. Do not draw the clock first.
+            handleButtonInput(wakeInput);
+        } else {
+            // Other buttons leave us on the watch face.
+            screenManager.draw();
+        }
+    } else {
+        // Cold boot or timer wake: draw the watch face normally.
+        screenManager.draw();
     }
 }
 

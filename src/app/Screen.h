@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Input.h"
+#define FULLSCREEN 0, 0, 200, 200
 
 class Screen {
 public:

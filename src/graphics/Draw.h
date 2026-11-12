@@ -10,6 +10,8 @@ public:
     void drawBattery(const BatteryInfo& battery, int x, int y);
     void drawDate(int x, int y);
     void drawText(char *text, int x, int y);
+    void fill(int x, int y, int w, int h);
+    void setPartial(int x, int y, int w, int h);
 
 
 private:

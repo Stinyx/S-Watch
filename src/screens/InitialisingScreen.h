@@ -12,6 +12,5 @@ public:
     void draw() override;
 
 private:
-    //WatchFace* activeWatchFace = nullptr;
      Draw& drawing;
 };

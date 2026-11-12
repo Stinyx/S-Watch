@@ -10,19 +10,46 @@ void ClockScreen::draw() {
 
     display.firstPage();
     do {
-        display.fillScreen(GxEPD_WHITE);
+        drawing.fill(FULLSCREEN);
 
-        BatteryInfo battery = power.getBatteryInfo();
-
-        drawing.drawTime(0, 0);
-        drawing.drawBattery(battery, 20, 150);
+        drawing.drawTime(15, 50);
+        drawing.drawBattery(power.getBatteryInfo(), 20, 150);
         drawing.drawDate(20, 180);
 
     } while (display.nextPage());
 }
 
+void ClockScreen::update() {
+
+    // Update time
+    drawing.setPartial(15, 50, 169, 71);
+    display.firstPage();
+    do {
+        drawing.fill(15, 50, 169, 71);
+        drawing.drawTime(15, 50);
+    } while (display.nextPage());
+
+
+    // Update battery
+    drawing.setPartial(15, 130, 185, 25);
+    display.firstPage();
+    do {
+       drawing.fill(15, 130, 185, 25);
+        drawing.drawBattery(power.getBatteryInfo(), 20, 150);
+    } while (display.nextPage());
+
+
+    // Update date
+    drawing.setPartial(15, 160, 185, 25);
+    display.firstPage();
+    do {
+       drawing.fill(15, 160, 185, 25);
+        drawing.drawDate(20, 180);
+    } while (display.nextPage());
+}
+
 void ClockScreen::enter() {}
-void ClockScreen::update() {}
+
 
 void ClockScreen::handleInput(Input input) {
     switch (input) {
