@@ -21,7 +21,7 @@ void Display::init() {
         SPISettings(20000000, MSBFIRST, SPI_MODE0)
     );
 
-    display.epd2.setBusyCallback(displayBusyCallback);
+    //display.epd2.setBusyCallback(displayBusyCallback);
 
     display.setRotation(0);
     display.setFont(&FreeMonoBold9pt7b);

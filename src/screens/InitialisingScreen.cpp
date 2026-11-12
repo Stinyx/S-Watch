@@ -11,7 +11,7 @@ void InitialisingScreen::draw() {
     display.firstPage();
     do{
         drawing.drawImage(flowersakuralogo);
-        drawing.drawText("S-Watch Initialising...", 20, 190);
+        drawing.drawText("S-Watch Booting...", 10, 190);
     }while(display.nextPage());
     
 

@@ -118,8 +118,11 @@ void App::begin() {
             // Other buttons leave us on the watch face.
             screenManager.draw();
         }
+    } else if (timerWake) {
+        // Timer wake: update the watch face using partial refresh.
+        screenManager.update();
     } else {
-        // Cold boot or timer wake: draw the watch face normally.
+        // Cold boot: full refresh.
         screenManager.draw();
     }
 }

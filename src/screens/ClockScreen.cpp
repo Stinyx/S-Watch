@@ -1,5 +1,6 @@
 #include "ClockScreen.h"
 #include "services/PowerManager.h"
+#include "services/TimeManager.h"
 #include "hardware/Display.h"
 
 ClockScreen::ClockScreen(Draw& drawing, PowerManager& power)
@@ -61,7 +62,9 @@ void ClockScreen::update() {
     */
 }
 
-void ClockScreen::enter() {}
+void ClockScreen::enter() {
+    timeManager.update();
+}
 
 
 void ClockScreen::handleInput(Input input) {
