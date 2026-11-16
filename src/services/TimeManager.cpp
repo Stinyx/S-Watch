@@ -1,8 +1,8 @@
 #include "TimeManager.h"
 #include "config/WifiCredentials.h"
 #include <WiFi.h>
+#include "esp_bt.h"
 #include "config/Debug.h"
-
 /*
 
 #include "TimeManager.h"
@@ -207,6 +207,13 @@ void TimeManager::update() {
     currentTime.dayNumber = timeinfo.tm_mday;
     currentTime.year = timeinfo.tm_year + 1900;
     currentTime.monthNumber = timeinfo.tm_mon + 1;
+}
+
+void TimeManager::disableRadios() {
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
+
+    btStop();
 }
 
 TimeManager timeManager;

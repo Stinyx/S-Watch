@@ -148,6 +148,8 @@ void App::sleepUntilNextMinute() {
         (uint64_t)secondsToSleep * 1000000ULL
     );
 
+    timeManager.disableRadios();
+
     buttons.enableWakeup();
     esp_deep_sleep_start();
 }

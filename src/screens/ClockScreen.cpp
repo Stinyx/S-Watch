@@ -1,4 +1,4 @@
-#include "ClockScreen.h"¨
+#include "ClockScreen.h"
 #include "Images.h"
 #include "services/PowerManager.h"
 #include "services/TimeManager.h"

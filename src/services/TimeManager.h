@@ -40,6 +40,8 @@ public:
 
     DateTime getDateTime() const;
     DateTime getCurrentTime() const;
+
+    void disableRadios();
 private:
     const long gmtOffset_sec = 3600;
     const int daylightOffset_sec = 3600;
