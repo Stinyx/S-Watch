@@ -105,11 +105,14 @@ void App::begin() {
 
     screenManager.setWatchFace(clockScreen);
     screenManager.setInitialScreen(clockScreen);
+    
 
     lastActivity = millis();
 
     if (buttonWake) {
         Input wakeInput = buttons.getWakeupInput();
+
+        //screenManager.handleInput(wakeInput)
 
         if (wakeInput == Input::Select) {
             // Go straight to the menu. Do not draw the clock first.
