@@ -24,7 +24,7 @@ void Draw::drawText(char *text, int x, int y){
     display.printf("%s", text);
 }
 
-void Draw::drawTime(int x, int y) {
+void Draw::drawTime(int x, int y, int style) {
     int digitSpacing = 5;
 
     DateTime currentTime = timeManager.getCurrentTime();
@@ -39,7 +39,7 @@ void Draw::drawTime(int x, int y) {
         for (int i = 0; i < 4; i++) {
             int digit = timeToString[i] - '0';
 
-            drawDigit(x + offset, y, digit, 1);
+            drawDigit(x + offset, y, digit, style);
 
             if (i == 1) {
                 offset += digit_width + 3;
@@ -61,56 +61,31 @@ void Draw::drawTime(int x, int y) {
 
 }
 
-void Draw::drawBattery(const BatteryInfo& battery, int x, int y) {
+void Draw::drawBattery(const BatteryInfo& battery, int x, int y, bool drawVolts, bool drawUSB) {
     char buffer[48];
 
-    if (battery.charging) {
-        snprintf(buffer, sizeof(buffer),
-                 "%d%% %.2fV *",
-                 battery.percentage, battery.voltage);
-    }
-    else if (battery.usbConnected) {
-        snprintf(buffer, sizeof(buffer),
-                 "%d%% %.2fV USB ",
-                 battery.percentage, battery.voltage);
+
+    if (battery.usbConnected && drawUSB) {
+        drawVolts ? snprintf(buffer, sizeof(buffer), "%d%% %.2fV USB", battery.percentage, battery.voltage) : 
+                    snprintf(buffer, sizeof(buffer), "%d%% USB", battery.percentage);
     }
     else {
-        snprintf(buffer, sizeof(buffer),
-                 "%d%% %.2fV",
-                 battery.percentage, battery.voltage);
+        drawVolts ? snprintf(buffer, sizeof(buffer), "%d%% %.2fV", battery.percentage, battery.voltage) : 
+                    snprintf(buffer, sizeof(buffer), "%d%%", battery.percentage);
     }
 
-    //display.setPartialWindow(15, 130, 190, 40);
 
-    //display.firstPage();
+    display.setCursor(x, y);
+    display.print(buffer);
 
-    //do {
-        //display.fillRect(15, 130, 190, 40, GxEPD_WHITE);
-
-        display.setCursor(x, y);
-        display.print(buffer);
-
-    //} while (display.nextPage());
 }
 
-void Draw::drawDate(int x, int y) {
+void Draw::drawDate(int x, int y, bool drawYear) {
     DateTime currentTime = timeManager.getCurrentTime();
 
-    //display.setPartialWindow(15, 160, 190, 40);
-    //display.firstPage();
-
-    //do {
-       // display.fillRect(15, 160, 190, 40, GxEPD_WHITE);
-
         display.setCursor(x, y);
-        display.printf(
-            "%d.%d.%d",
-            currentTime.dayNumber,
-            currentTime.monthNumber,
-            currentTime.year
-        );
-
-    //} while (display.nextPage());
+        drawYear ? display.printf("%d.%d.%d", currentTime.dayNumber, currentTime.monthNumber, currentTime.year) : 
+                    display.printf("%d.%d", currentTime.dayNumber, currentTime.monthNumber);
 }
 /*
 void draw_time(){

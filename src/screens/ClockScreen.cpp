@@ -1,4 +1,5 @@
-#include "ClockScreen.h"
+#include "ClockScreen.h"¨
+#include "Images.h"
 #include "services/PowerManager.h"
 #include "services/TimeManager.h"
 #include "hardware/Display.h"
@@ -12,54 +13,30 @@ void ClockScreen::draw() {
     display.firstPage();
     do {
         drawing.fill(FULLSCREEN);
+        drawing.drawImage(loveflower);
 
         drawing.drawTime(15, 50);
-        drawing.drawBattery(power.getBatteryInfo(), 20, 150);
-        drawing.drawDate(20, 180);
+        drawing.drawBattery(power.getBatteryInfo(), 150, 25, false, false); // 20 150 originally under time 
+        drawing.drawDate(15, 25, false); // 20 originally under Battery
 
     } while (display.nextPage());
 }
 
 void ClockScreen::update() {
-    drawing.setPartial(15, 50, 185, 135);
+    drawing.setPartial(15, 10, 185, 125);  // 15 50 185 135 originally for the whole stack
 
     display.firstPage();
     do {
-        drawing.fill(15, 50, 185, 135);
+        drawing.fill(15, 10, 185, 125); // 15 50 185 135 originally
+
+        drawing.drawImage(loveflower);
 
         drawing.drawTime(15, 50);
-        drawing.drawBattery(power.getBatteryInfo(), 20, 150);
-        drawing.drawDate(20, 180);
+        drawing.drawBattery(power.getBatteryInfo(), 150, 25, false, false); // 20 150 originally under time 
+        drawing.drawDate(15, 25, false); // 20 180 originally under Battery
 
     } while (display.nextPage());
 
-    /*
-    // Update time
-    drawing.setPartial(15, 50, 169, 71);
-    display.firstPage();
-    do {
-        drawing.fill(15, 50, 169, 71);
-        drawing.drawTime(15, 50);
-    } while (display.nextPage());
-
-
-    // Update battery
-    drawing.setPartial(15, 130, 185, 25);
-    display.firstPage();
-    do {
-       drawing.fill(15, 130, 185, 25);
-        drawing.drawBattery(power.getBatteryInfo(), 20, 150);
-    } while (display.nextPage());
-
-
-    // Update date
-    drawing.setPartial(15, 160, 185, 25);
-    display.firstPage();
-    do {
-       drawing.fill(15, 160, 185, 25);
-        drawing.drawDate(20, 180);
-    } while (display.nextPage());
-    */
 }
 
 void ClockScreen::enter() {

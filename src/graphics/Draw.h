@@ -6,9 +6,9 @@
 class Draw {
 public:
     void drawImage(const unsigned char* image);
-    void drawTime(int x, int y);
-    void drawBattery(const BatteryInfo& battery, int x, int y);
-    void drawDate(int x, int y);
+    void drawTime(int x, int y, int style = 1);
+    void drawBattery(const BatteryInfo& battery, int x, int y, bool drawVolts = true, bool drawUSB = true);
+    void drawDate(int x, int y, bool drawYear = true);  
     void drawText(char *text, int x, int y);
     void fill(int x, int y, int w, int h);
     void setPartial(int x, int y, int w, int h);
