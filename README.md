@@ -46,34 +46,34 @@ GND     →    GND
 
 ## Features (Slowly being added)
 
-* Automatic NTP synchronization upon watch boot
-* Battery percentage indicator
-* Date and time functionality
-* External buttons mapped for changing screens and UI handling
-* ~~Manual NTP synchronization~~ - TODO
-* ~~Multiple clock display styles (currently 3 types)~~ - TODO
+* [x] Automatic NTP synchronization upon watch boot
+* [x] Battery percentage indicator
+* [x] Date and time functionality
+* [x] External buttons mapped for changing screens and UI handling
+* [ ] Manual NTP synchronization
+* [ ] Multiple clock display styles (currently 3 types)
 
 ## Integrated Screens
 
-* **Clock** - shows current date and time (customizable in the future) - DONE
-* **About** - Short information and custom about text (done but change info) - DONE
-* **Settings** - for changing UI and NTP Syncing, other settings soon (so far i have a menu) - TODO
-* **Timer** - stopwatch functionality - TODO
-* **Alarm** - set up alarms - TODO
-* **Navigation** - Changing between timer, alarm, settings, etc. (going to be in the menu) - TODO
+* [x] **Clock** - shows current date and time (customizable in the future)
+* [x] **About** - Short information and custom about text (done but change info)
+* [ ] **Settings** - for changing UI and NTP Syncing, other settings soon (so far i have a menu)
+* [ ] **Timer** - stopwatch functionality
+* [ ] **Alarm** - set up alarms
+* [ ] **Navigation** - Changing between timer, alarm, settings, etc. (going to be in the menu)
 
 ## TODO (Future reference for code or hardware)
 
 # What i want to achieve
 - i want  to achieve all of the standard smartwatch functionalities in my own style
 
-* ~~Refactor code into multiple files for readability~~ - done 
-* ~~Show the current time~~ - done
-* ~~Settings for customization~~ - done (partly)
-* ~~Automatic NTP syncing~~ - done (only on boot)
-* Timer functionality
-* Stopwatch functionality
-* Customization and easier custom clock screens
+* [x] Refactor code into multiple files for readability
+* [x] Show the current time
+* [x] Settings for customization (partly)
+* [x] Automatic NTP syncing (only on boot)
+* [ ] Timer functionality
+* [ ] Stopwatch functionality
+* [ ] Customization and easier custom clock screens
 
 # What is optional
 * Start designing PCB (with some tweaks from Watchy hardware)
