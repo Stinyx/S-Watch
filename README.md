@@ -14,7 +14,7 @@ It had:
 * A buzzer to give the user haptic feedback on Alarms and such
 * And it was open source and available to buy!
 
-## Technologies And Libraries 
+# Technologies And Libraries 
 
 * `<GxEPD2_BW.h>` - E-Ink display compatibility and communication
 * `<WiFi.h>` - connecting to wifi and syncing NTP data
@@ -23,13 +23,13 @@ It had:
 - Written in `C++` in `VSCode` using `PlatformIO` for writing to the MCU
 - All GUI elements and art handmade by me in `GIMP`
 
-## Hardware (for breadboard prototyping)
+# Hardware (for breadboard prototyping)
 
 * [Good Display GDEY0154D67 1.54" 200x200 ePaper display](https://www.laskakit.cz/good-display-gdey0154d67-1-54--200x200-epaper-displej/)
 * [GeB LiPol Battery 503035 500mAh 3.7V JST-PH 2.0](https://www.laskakit.cz/baterie-li-po-3-7v-500mah-lipo/) 
 * ESP32 microcontroller (aliexpress, don't know the specific one)
 
-## Wiring (breadboard prototyping with E-Ink screen and an ESP-32 Devkit)
+# Wiring (breadboard prototyping with E-Ink screen and an ESP-32 Devkit)
 
 `ESP32`        `E‑Ink Display`  
 GPIO18  →    CLK  
@@ -40,11 +40,11 @@ GPIO5   →    CS
 GND     →    GND  
 3V3     →    VCC  
 
-## Hardware (for for actual project and production)
+# Hardware (for for actual project and production)
 
 * [Watchy Watch V3 by SQFMI](https://cz.mouser.com/en/ProductDetail/SQFMI/SQFMI-WATCHY-10?qs=DRkmTr78QARN9VSJRzqRxw%3D%3D)
 
-## Features (Slowly being added)
+# Features (Slowly being added)
 
 * [x] Automatic NTP synchronization upon watch boot
 * [x] Battery percentage indicator
@@ -53,7 +53,7 @@ GND     →    GND
 * [ ] Manual NTP synchronization
 * [ ] Multiple clock display styles (currently 3 types)
 
-## Integrated Screens
+# Integrated Screens
 
 * [x] **Clock** - shows current date and time (customizable in the future)
 * [x] **About** - Short information and custom about text (done but change info)
@@ -62,9 +62,9 @@ GND     →    GND
 * [ ] **Alarm** - set up alarms
 * [ ] **Navigation** - Changing between timer, alarm, settings, etc. (going to be in the menu)
 
-## TODO (Future reference for code or hardware)
+# TODO (Future reference for code or hardware)
 
-# What i want to achieve
+## What i want to achieve
 - i want  to achieve all of the standard smartwatch functionalities in my own style
 
 * [x] Refactor code into multiple files for readability
@@ -75,7 +75,7 @@ GND     →    GND
 * [ ] Stopwatch functionality
 * [ ] Customization and easier custom clock screens
 
-# What is optional
+## What is optional
 * Start designing PCB (with some tweaks from Watchy hardware)
 * ESPNow functionality (to turn on other projects, lights and such)
 * Current Soundcloud song info through BLE 
