@@ -18,7 +18,7 @@ Button buttons;
 
 // INDIVIDUAL SCREENS + SCREEN MANAGER
 ScreenManager screenManager;
-ClockScreen clockScreen(draw, powerManager);
+ClockScreen clockScreen(draw, powerManager, screenManager);
 InitialisingScreen initialisingScreen(draw);
 MainMenuScreen menuScreen(draw);
 InfoScreen infoScreen(draw);
@@ -31,6 +31,9 @@ static void handleButtonInput(Input input) {
 
     lastActivity = millis();
 
+    screenManager.handleInput(input);
+
+    /*
     if (screenManager.isOnWatchFace()) {
         if (input == Input::Select) {
             screenManager.setScreen(menuScreen);
@@ -43,6 +46,7 @@ static void handleButtonInput(Input input) {
             screenManager.setScreen(clockScreen);
             return;
         }
+    
 
         menuScreen.handleInput(input);
 
@@ -60,12 +64,14 @@ static void handleButtonInput(Input input) {
 
         return;
     }
+    
 
     if (screenManager.isActive(infoScreen)) {
         if (input == Input::Back) {
             screenManager.setScreen(menuScreen);
         }
     }
+    */
 }
 
 void App::begin() {

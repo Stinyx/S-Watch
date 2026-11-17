@@ -2,10 +2,11 @@
 #include "Images.h"
 #include "services/PowerManager.h"
 #include "services/TimeManager.h"
+#include "MainMenuScreen.h"
 #include "hardware/Display.h"
 
-ClockScreen::ClockScreen(Draw& drawing, PowerManager& power)
-    : drawing(drawing), power(power) {}
+ClockScreen::ClockScreen(Draw& drawing, PowerManager& power, ScreenManager& screenManager)
+    : drawing(drawing), power(power), screenManager(screenManager){}
 
 void ClockScreen::draw() {
     display.setFullWindow();
@@ -47,7 +48,7 @@ void ClockScreen::enter() {
 void ClockScreen::handleInput(Input input) {
     switch (input) {
         case Input::Select:
-            // Open your menu screen here.
+                screenManager.setScreen();
             break;
 
         case Input::Back:
