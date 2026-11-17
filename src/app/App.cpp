@@ -119,14 +119,17 @@ void App::begin() {
         Input wakeInput = buttons.getWakeupInput();
 
         //screenManager.handleInput(wakeInput)
+        handleButtonInput(wakeInput);
 
+        /*
         if (wakeInput == Input::Select) {
             // Go straight to the menu. Do not draw the clock first.
-            handleButtonInput(wakeInput);
+            
         } else {
             // Other buttons leave us on the watch face.
             screenManager.draw();
         }
+        */
     } else if (timerWake) {
         // Timer wake: update the watch face using partial refresh.
         screenManager.update();

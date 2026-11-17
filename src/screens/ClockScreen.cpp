@@ -2,8 +2,8 @@
 #include "Images.h"
 #include "services/PowerManager.h"
 #include "services/TimeManager.h"
-#include "MainMenuScreen.h"
 #include "hardware/Display.h"
+#include "Screens.h"
 
 ClockScreen::ClockScreen(Draw& drawing, PowerManager& power, ScreenManager& screenManager)
     : drawing(drawing), power(power), screenManager(screenManager){}
@@ -48,7 +48,7 @@ void ClockScreen::enter() {
 void ClockScreen::handleInput(Input input) {
     switch (input) {
         case Input::Select:
-                screenManager.setScreen();
+                screenManager.setScreen(mainMenuScreen);
             break;
 
         case Input::Back:
