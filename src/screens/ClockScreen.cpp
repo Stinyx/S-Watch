@@ -1,8 +1,13 @@
 #include "ClockScreen.h"
-#include "Images.h"
-//#include "services/TimeManager.h"
-#include "hardware/Display.h"
 #include "Screens.h"
+#include "graphics/Draw.h"
+#include "services/PowerManager.h"
+#include "services/TimeManager.h"
+#include "app/ScreenManager.h"
+#include "hardware/Display.h"
+#include "Images.h"
+
+ClockScreen::ClockScreen() = default;
 
 void ClockScreen::draw() {
     display.setFullWindow();

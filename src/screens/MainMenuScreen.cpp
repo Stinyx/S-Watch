@@ -1,5 +1,10 @@
 #include "MainMenuScreen.h"
 #include "hardware/Display.h"
+#include "graphics/Draw.h"
+#include "Screens.h"
+#include "app/ScreenManager.h"
+
+MainMenuScreen::MainMenuScreen() = default;
 
 static const char* menuItems[] = {
     "Watch face",
@@ -24,8 +29,12 @@ void MainMenuScreen::handleInput(Input input) {
             break;
 
         case Input::Select:
-            selectionMade = true;
-            break;
+            if (selected == 0) {
+                screenManager.setScreen(clockScreen);
+            } else if (selected == 1) {
+                screenManager.setScreen(infoScreen);
+            }
+    break;
 
         default:
             break;

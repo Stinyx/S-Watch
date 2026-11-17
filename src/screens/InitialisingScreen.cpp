@@ -1,6 +1,9 @@
 #include "InitialisingScreen.h"
 #include "Images.h"
 #include "hardware/Display.h"
+#include "graphics/Draw.h"
+
+InitialisingScreen::InitialisingScreen() = default;
 
 void InitialisingScreen::draw() {
     display.setFullWindow();

@@ -1,5 +1,10 @@
 #include "InfoScreen.h"
 #include "hardware/Display.h"
+#include "graphics/Draw.h"
+#include "Screens.h"
+#include "App/ScreenManager.h"
+
+InfoScreen::InfoScreen() = default;
 
 void InfoScreen::draw() {
     display.setFullWindow();
@@ -13,6 +18,12 @@ void InfoScreen::draw() {
         drawing.drawText("BACK to menu", 15, 160);
 
     } while (display.nextPage());
+}
+
+void InfoScreen::handleInput(Input input) {
+    if (input == Input::Back) {
+        screenManager.setScreen(mainMenuScreen);
+    }
 }
 
 void InfoScreen::update(){
