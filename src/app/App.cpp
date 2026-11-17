@@ -9,19 +9,22 @@
 #include "screens/InfoScreen.h"
 
 // GRAPHICS
-Draw draw;
+Draw drawing;
 
 // HARDWARE
-PowerManager powerManager;
+
 Display displayController;
 Button buttons;
 
-// INDIVIDUAL SCREENS + SCREEN MANAGER
+// MANAGERS
 ScreenManager screenManager;
-ClockScreen clockScreen(draw, powerManager, screenManager);
-InitialisingScreen initialisingScreen(draw);
-MainMenuScreen menuScreen(draw);
-InfoScreen infoScreen(draw);
+PowerManager powerManager;
+TimeManager timeManager;
+
+ClockScreen clockScreen;
+InitialisingScreen initialisingScreen;
+MainMenuScreen mainMenuScreen;
+InfoScreen infoScreen;
 
 static unsigned long lastActivity = 0;
 static constexpr unsigned long MENU_TIMEOUT = 15000;

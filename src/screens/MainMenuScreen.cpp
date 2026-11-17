@@ -6,9 +6,6 @@ static const char* menuItems[] = {
     "Device info"
 };
 
-MainMenuScreen::MainMenuScreen(Draw& drawing)
-    : drawing(drawing){}
-
 void MainMenuScreen::enter() {
     selected = 0;
     selectionMade = false;
@@ -34,6 +31,7 @@ void MainMenuScreen::handleInput(Input input) {
             break;
     }
 }
+
 
 void MainMenuScreen::draw() {
     display.setFullWindow();

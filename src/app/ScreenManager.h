@@ -57,3 +57,5 @@ private:
     Screen* activeScreen = nullptr;
     Screen* watchFace = nullptr;
 };
+
+extern ScreenManager screenManager;

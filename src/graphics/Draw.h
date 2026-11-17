@@ -17,3 +17,5 @@ public:
 private:
     void drawDigit(int x, int y, int digit, int style);
 };
+
+extern Draw drawing;

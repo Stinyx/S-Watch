@@ -1,9 +1,6 @@
 #include "InfoScreen.h"
 #include "hardware/Display.h"
 
-InfoScreen::InfoScreen(Draw& drawing)
-    : drawing(drawing){}
-
 void InfoScreen::draw() {
     display.setFullWindow();
     display.firstPage();

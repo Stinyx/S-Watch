@@ -216,7 +216,7 @@ void TimeManager::disableRadios() {
     btStop();
 }
 
-TimeManager timeManager;
+extern TimeManager timeManager;
 
 
 

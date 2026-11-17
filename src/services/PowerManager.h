@@ -17,3 +17,5 @@ private:
     float readVoltage();
     int calculatePercentage(float voltage);
 };
+
+extern PowerManager powerManager;

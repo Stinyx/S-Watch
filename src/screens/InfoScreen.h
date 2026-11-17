@@ -1,13 +1,10 @@
 #pragma once
 
 #include "app/Screen.h"
-#include "graphics/Draw.h"
 
 class InfoScreen : public Screen {
 public:
-    explicit InfoScreen(Draw& draw); 
+    explicit InfoScreen(); 
     void draw() override;
     void update() override;
-private:
-    Draw& drawing;
 };

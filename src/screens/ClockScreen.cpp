@@ -1,12 +1,8 @@
 #include "ClockScreen.h"
 #include "Images.h"
-#include "services/PowerManager.h"
-#include "services/TimeManager.h"
+//#include "services/TimeManager.h"
 #include "hardware/Display.h"
 #include "Screens.h"
-
-ClockScreen::ClockScreen(Draw& drawing, PowerManager& power, ScreenManager& screenManager)
-    : drawing(drawing), power(power), screenManager(screenManager){}
 
 void ClockScreen::draw() {
     display.setFullWindow();
@@ -17,7 +13,7 @@ void ClockScreen::draw() {
         drawing.drawImage(loveflower);
 
         drawing.drawTime(15, 50);
-        drawing.drawBattery(power.getBatteryInfo(), 150, 25, false, false); // 20 150 originally under time 
+        drawing.drawBattery(powerManager.getBatteryInfo(), 150, 25, false, false); // 20 150 originally under time 
         drawing.drawDate(15, 25, false); // 20 originally under Battery
 
     } while (display.nextPage());
@@ -33,7 +29,7 @@ void ClockScreen::update() {
         drawing.drawImage(loveflower);
 
         drawing.drawTime(15, 50);
-        drawing.drawBattery(power.getBatteryInfo(), 150, 25, false, false); // 20 150 originally under time 
+        drawing.drawBattery(powerManager.getBatteryInfo(), 150, 25, false, false); // 20 150 originally under time 
         drawing.drawDate(15, 25, false); // 20 180 originally under Battery
 
     } while (display.nextPage());
