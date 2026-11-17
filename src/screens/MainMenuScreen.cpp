@@ -2,7 +2,7 @@
 #include "hardware/Display.h"
 #include "graphics/Draw.h"
 #include "Screens.h"
-#include "app/ScreenManager.h"
+#include "services/ScreenManager.h"
 
 MainMenuScreen::MainMenuScreen() = default;
 
@@ -34,7 +34,11 @@ void MainMenuScreen::handleInput(Input input) {
             } else if (selected == 1) {
                 screenManager.setScreen(infoScreen);
             }
-    break;
+            break;
+        
+        case Input::Back:
+            screenManager.setScreen(clockScreen);
+            break;
 
         default:
             break;
@@ -89,15 +93,4 @@ void MainMenuScreen::update() {
 
     }while(display.nextPage());       
 
-}
-
-
-int MainMenuScreen::getSelection() const {
-    return selected;
-}
-
-bool MainMenuScreen::consumeSelection() {
-    bool result = selectionMade;
-    selectionMade = false;
-    return result;
 }

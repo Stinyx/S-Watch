@@ -1,12 +1,13 @@
 #include "app/App.h"
 #include "graphics/Draw.h"
-#include "screens/ClockScreen.h"
-#include "screens/InitialisingScreen.h"
+#include "screens/Screens.h"
 #include "services/TimeManager.h"
 #include "services/PowerManager.h"
 #include "hardware/Button.h"
-#include "screens/MainMenuScreen.h"
-#include "screens/InfoScreen.h"
+
+#include "hardware/Display.h"
+#include "services/ScreenManager.h"
+
 
 // GRAPHICS
 Draw drawing;
@@ -35,46 +36,6 @@ static void handleButtonInput(Input input) {
     lastActivity = millis();
 
     screenManager.handleInput(input);
-
-    /*
-    if (screenManager.isOnWatchFace()) {
-        if (input == Input::Select) {
-            screenManager.setScreen(menuScreen);
-        }
-        return;
-    }
-
-    if (screenManager.isActive(menuScreen)) {
-        if (input == Input::Back) {
-            screenManager.setScreen(clockScreen);
-            return;
-        }
-    
-
-        menuScreen.handleInput(input);
-
-        if (menuScreen.consumeSelection()) {
-            switch (menuScreen.getSelection()) {
-                case 0:
-                    screenManager.setScreen(clockScreen);
-                    break;
-
-                case 1:
-                    screenManager.setScreen(infoScreen);
-                    break;
-            }
-        }
-
-        return;
-    }
-    
-
-    if (screenManager.isActive(infoScreen)) {
-        if (input == Input::Back) {
-            screenManager.setScreen(menuScreen);
-        }
-    }
-    */
 }
 
 void App::begin() {
@@ -121,18 +82,8 @@ void App::begin() {
     if (buttonWake) {
         Input wakeInput = buttons.getWakeupInput();
 
-        //screenManager.handleInput(wakeInput)
         handleButtonInput(wakeInput);
 
-        /*
-        if (wakeInput == Input::Select) {
-            // Go straight to the menu. Do not draw the clock first.
-            
-        } else {
-            // Other buttons leave us on the watch face.
-            screenManager.draw();
-        }
-        */
     } else if (timerWake) {
         // Timer wake: update the watch face using partial refresh.
         screenManager.update();
@@ -175,9 +126,6 @@ void App::loop() {
     if (input != Input::None) {
         handleButtonInput(input);
     }
-
-    // Do not refresh the screen continuously here.
-    // Individual screens call update() when something changes.
 
     if (!screenManager.isOnWatchFace()) {
         if (millis() - lastActivity >= MENU_TIMEOUT) {

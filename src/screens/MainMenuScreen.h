@@ -10,9 +10,6 @@ public:
     void draw() override;
     void update() override;
 
-    int getSelection() const;
-    bool consumeSelection();
-
 private:
     int selected = 0;
     bool selectionMade = false;

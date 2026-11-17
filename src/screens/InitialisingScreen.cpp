@@ -16,7 +16,3 @@ void InitialisingScreen::draw() {
     
 
 }
-
-void InitialisingScreen::enter() {}
-void InitialisingScreen::update() {}
-void InitialisingScreen::handleInput(Input input) {}
