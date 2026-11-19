@@ -4,36 +4,34 @@
 #include "Screens.h"
 #include "services/ScreenManager.h"
 
-MainMenuScreen::MainMenuScreen() = default;
+MainMenuScreen::MainMenuScreen(){
+    newSelection("Watch Face", [](){
+        screenManager.setScreen(clockScreen);
+    });
 
-static const char* menuItems[] = {
-    "Watch face",
-    "Device info"
-};
+    newSelection("Device Info", [](){
+        screenManager.setScreen(infoScreen);
+    });
+}
 
 void MainMenuScreen::enter() {
-    selected = 0;
-    selectionMade = false;
+    reset();
 }
 
 void MainMenuScreen::handleInput(Input input) {
     switch (input) {
         case Input::Up:
-            selected = (selected + ITEM_COUNT - 1) % ITEM_COUNT;
+            moveUp();
             update();
             break;
 
         case Input::Down:
-            selected = (selected + 1) % ITEM_COUNT;
+            moveDown();
             update();
             break;
 
         case Input::Select:
-            if (selected == 0) {
-                screenManager.setScreen(clockScreen);
-            } else if (selected == 1) {
-                screenManager.setScreen(infoScreen);
-            }
+            activate();
             break;
         
         case Input::Back:
@@ -54,17 +52,17 @@ void MainMenuScreen::draw() {
         drawing.fill(FULLSCREEN);
         drawing.drawText("MENU", 15, 25);
 
-        for (int i = 0; i < ITEM_COUNT; i++) {
+        for (int i = 0; i < size(); i++) {
             int y = 65 + i * 40;
 
-            if (i == selected) {
+            if (i == getSelected()) {
                 display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
                 drawing.drawText("> ", 18, y + 4);
             } else {
                 drawing.drawText("  ", 18, y + 4);
             }
 
-            display.print(menuItems[i]);
+            display.print(getSelection(i).name);
         }
 
     } while (display.nextPage());
@@ -78,17 +76,17 @@ void MainMenuScreen::update() {
     do{
         drawing.fill(0, 45, 200, 85);
         
-        for (int i = 0; i < ITEM_COUNT; i++) {
+        for (int i = 0; i < size(); i++) {
             int y = 65 + i * 40;
 
-            if (i == selected) {
+            if (i == getSelected()) {
                 display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
                 drawing.drawText("> ", 18, y + 4);
             } else {
                 drawing.drawText("  ", 18, y + 4);
             }
 
-            display.print(menuItems[i]);
+            display.print(getSelection(i).name);
         }
 
     }while(display.nextPage());       

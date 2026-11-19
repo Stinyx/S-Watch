@@ -1,8 +1,8 @@
 #pragma once
 
-#include "app/Screen.h"
+#include "app/Menu.h"
 
-class MainMenuScreen : public Screen {
+class MainMenuScreen : public Menu {
 public:
     explicit MainMenuScreen();
     void enter() override;
@@ -11,8 +11,4 @@ public:
     void update() override;
 
 private:
-    int selected = 0;
-    bool selectionMade = false;
-
-    static constexpr int ITEM_COUNT = 2;
 };
