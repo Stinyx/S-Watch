@@ -1,4 +1,4 @@
-#include "clockfaces.h"
+#include "ClockStyles.h"
 
 unsigned char* digitArray1[10] = {
     digit0, digit1, digit2, digit3, digit4,

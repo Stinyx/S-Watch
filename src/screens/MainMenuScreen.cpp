@@ -12,6 +12,12 @@ MainMenuScreen::MainMenuScreen(){
     newSelection("Device Info", [](){
         screenManager.setScreen(infoScreen);
     });
+
+    /*
+    newSelection("Settings", [](){
+        screenManager.setScreen(settingsScreen);
+    });
+    */
 }
 
 void MainMenuScreen::enter() {
