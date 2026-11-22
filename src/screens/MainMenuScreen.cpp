@@ -13,11 +13,20 @@ MainMenuScreen::MainMenuScreen(){
         screenManager.setScreen(infoScreen);
     });
 
-    /*
     newSelection("Settings", [](){
         screenManager.setScreen(settingsScreen);
     });
-    */
+
+    newSelection("TEST 1", NULL);
+    newSelection("TEST 2", NULL);
+    newSelection("TEST 3", NULL);
+    newSelection("TEST 4", NULL);
+    newSelection("TEST 5", NULL);
+    newSelection("TEST 6", NULL);
+    newSelection("TEST 7", NULL);
+    newSelection("TEST 8", NULL);
+    newSelection("TEST 9", NULL);
+
 }
 
 void MainMenuScreen::enter() {
@@ -58,18 +67,7 @@ void MainMenuScreen::draw() {
         drawing.fill(FULLSCREEN);
         drawing.drawText("MENU", 15, 25);
 
-        for (int i = 0; i < size(); i++) {
-            int y = 65 + i * 40;
-
-            if (i == getSelected()) {
-                display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
-                drawing.drawText("> ", 18, y + 4);
-            } else {
-                drawing.drawText("  ", 18, y + 4);
-            }
-
-            display.print(getSelection(i).name);
-        }
+        drawMenuItems();
 
     } while (display.nextPage());
 }
@@ -77,23 +75,12 @@ void MainMenuScreen::draw() {
 
 void MainMenuScreen::update() {
 
-    drawing.setPartial(0, 45, 200, 85);
+    drawing.setPartial(0, 40, 200, 200);
     display.firstPage();
     do{
-        drawing.fill(0, 45, 200, 85);
+        drawing.fill(0, 40, 200, 200);
         
-        for (int i = 0; i < size(); i++) {
-            int y = 65 + i * 40;
-
-            if (i == getSelected()) {
-                display.drawRect(10, y - 15, 180, 30, GxEPD_BLACK);
-                drawing.drawText("> ", 18, y + 4);
-            } else {
-                drawing.drawText("  ", 18, y + 4);
-            }
-
-            display.print(getSelection(i).name);
-        }
+        drawMenuItems();
 
     }while(display.nextPage());       
 

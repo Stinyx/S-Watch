@@ -1,57 +1,76 @@
-/*
-
 #include "SettingsScreen.h"
+#include "hardware/Display.h"
+#include "graphics/Draw.h"
+#include "Screens.h"
+#include "services/ScreenManager.h"
 
-void SettingsScreen::draw(){
-  epdDrawPartial(15, 45, 170, 145,
-      []() {
-          int lineHeight = 25;
-          int offset = (menuScrollOffset > 0) ? 85 : 60;
+SettingsScreen::SettingsScreen(){
 
-          for (int row = 0; row < visibleItems; row++) {
+    newSelection("SETTING 1", NULL);
+    newSelection("SETTING 2", NULL);
+    newSelection("SETTING 3", NULL);
+    newSelection("SETTING 4", NULL);
+    newSelection("SETTING 5", NULL);
+    newSelection("SETTING 6", NULL);
+    newSelection("SETTING 7", NULL);
+    newSelection("SETTING 8", NULL);
+    newSelection("SETTING 9", NULL);
 
-              int settingIndex = menuScrollOffset + row;
-
-              if (settingIndex >= settingsOptions.size())
-                  break;
-
-              const Setting& setting = settingsOptions[settingIndex];
-
-              display.setCursor(15, offset);
-
-              if (currentMenuSelected == settingIndex)
-                  display.printf(">%s", setting.description);
-              else
-                  display.printf("%s", setting.description);
-
-              if (setting.scrollable && setting.scrollOptions != NULL && setting.toggleable == false) {
-                  display.setCursor(155, offset);
-                  display.printf("<%d>", *setting.scrollOptions);
-              }
-
-              if(setting.toggleable == true){
-                
-                if(*setting.scrollOptions == 0){
-                  draw_sprite(155, offset - toggle_button_height, toggle_button_width, toggle_button_height, toggle_button_off);
-                }else{
-                  draw_sprite(155, offset - toggle_button_height, toggle_button_width, toggle_button_height, toggle_button_on);
-                }
-              }
-
-              offset += lineHeight;
-          }
-
-          // Show arrows if more items exist
-          if (menuScrollOffset > 0) {
-              display.setCursor(60, 60);
-              display.print("/\\ /\\ /\\");
-          }
-
-          if (menuScrollOffset + visibleItems < settingsOptions.size()) {
-              display.setCursor(60, 180);
-              display.print("\\/ \\/ \\/");
-          }
-      }
-  );
 }
-*/
+
+void SettingsScreen::enter() {
+    reset();
+}
+
+void SettingsScreen::handleInput(Input input) {
+    switch (input) {
+        case Input::Up:
+            moveUp();
+            update();
+            break;
+
+        case Input::Down:
+            moveDown();
+            update();
+            break;
+
+        case Input::Select:
+            activate();
+            break;
+        
+        case Input::Back:
+            screenManager.setScreen(mainMenuScreen);
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+void SettingsScreen::draw() {
+    display.setFullWindow();
+    display.firstPage();
+
+    do {
+        drawing.fill(FULLSCREEN);
+        drawing.drawText("SETTINGS", 15, 25);
+
+        drawMenuItems();
+
+    } while (display.nextPage());
+}
+
+
+void SettingsScreen::update() {
+
+    drawing.setPartial(0, 40, 200, 200);
+    display.firstPage();
+    do{
+        drawing.fill(0, 40, 200, 200);
+        
+        drawMenuItems();
+
+    }while(display.nextPage());       
+
+}

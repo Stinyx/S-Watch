@@ -26,6 +26,7 @@ ClockScreen clockScreen;
 InitialisingScreen initialisingScreen;
 MainMenuScreen mainMenuScreen;
 InfoScreen infoScreen;
+SettingsScreen settingsScreen;
 
 static unsigned long lastActivity = 0;
 static constexpr unsigned long MENU_TIMEOUT = 15000;

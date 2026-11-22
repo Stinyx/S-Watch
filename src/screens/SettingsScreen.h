@@ -1,17 +1,13 @@
-/*
 #pragma once
 
-#include "app/Screen.h"
-#include "watchfaces/MinimalWatchFace.h"
+#include "app/Menu.h"
 
-class SettingsScreen : public Screen {
+class SettingsScreen : public Menu {
 public:
+    explicit SettingsScreen();
     void enter() override;
     void update() override;
     void handleInput(Input input) override;
     void draw() override;
 
-private:
-    WatchFace* activeWatchFace = nullptr;
 };
-*/
