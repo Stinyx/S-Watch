@@ -73,9 +73,10 @@ void App::begin() {
     powerManager.init();
     buttons.init();
 
+    enableExternalRTCClock();
+
     // Initialize the clock on first boot.
     if (coldBoot) {
-        enableExternalRTCClock();
         display.setFullWindow();
         display.firstPage();
 
