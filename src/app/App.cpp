@@ -7,6 +7,7 @@
 
 #include "hardware/Display.h"
 #include "services/ScreenManager.h"
+#include "soc/rtc.h"
 
 
 // GRAPHICS
@@ -39,6 +40,28 @@ static void handleButtonInput(Input input) {
     screenManager.handleInput(input);
 }
 
+bool enableExternalRTCClock() {
+    // Enable the external 32.768 kHz crystal
+    rtc_clk_32k_enable(true);
+
+    // Wait for the crystal to start and check that it works
+    uint32_t calibration = rtc_clk_cal(RTC_CAL_32K_XTAL, 3000);
+
+    if (calibration == 0) {
+        return false;
+    }
+
+    // Select the external crystal as the RTC slow clock
+    rtc_clk_slow_freq_set(RTC_SLOW_FREQ_32K_XTAL);
+
+    // Verify the selected source
+    if (rtc_clk_slow_freq_get() != RTC_SLOW_FREQ_32K_XTAL) {
+        return false;
+    }
+
+    return true;
+}
+
 void App::begin() {
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
 
@@ -52,6 +75,7 @@ void App::begin() {
 
     // Initialize the clock on first boot.
     if (coldBoot) {
+        enableExternalRTCClock();
         display.setFullWindow();
         display.firstPage();
 
