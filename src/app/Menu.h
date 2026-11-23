@@ -68,26 +68,21 @@ public:
 
         if (totalItems == 0) return;
 
-        // Calculate which item should appear first.
-        // Keep the selected item visible by scrolling the entire list.
         int menuScrollOffset = 0;
 
         if (selected >= visibleItems) {
             menuScrollOffset = selected - visibleItems + 1;
         }
 
-        // Determine whether there are more items above or below.
         bool showTopArrow = menuScrollOffset > 0;
         bool showBottomArrow =
             menuScrollOffset + visibleItems < totalItems;
 
-        // Draw the arrow indicating more items above.
         if (showTopArrow) {
             display.setCursor(94, 53);
             display.print("^");
         }
 
-        // Draw the visible selections.
         for (int row = 0; row < visibleItems; row++) {
 
             int selectionIndex = menuScrollOffset + row;
@@ -102,7 +97,6 @@ public:
 
             display.setCursor(18, y);
 
-            // Draw the selection indicator at the actual selected item.
             if (selectionIndex == selected) {
                 display.print("> ");
             } else {
@@ -112,7 +106,6 @@ public:
             display.print(selection.name);
         }
 
-        // Draw the arrow indicating more items below.
         if (showBottomArrow) {
             display.setCursor(94, 190);
             display.print("v");

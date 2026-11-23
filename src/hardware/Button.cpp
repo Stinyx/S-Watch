@@ -70,7 +70,6 @@ Input Button::getWakeupInput() {
 }
 
 void Button::enableWakeup() {
-    // Buttons are active LOW.
     esp_sleep_enable_ext1_wakeup(
         BUTTON_MASK,
         ESP_EXT1_WAKEUP_ANY_LOW

@@ -51,7 +51,6 @@ void App::begin() {
     powerManager.init();
     buttons.init();
 
-    // Initialize the clock on first boot.
     if (coldBoot) {
         display.setFullWindow();
         display.firstPage();
@@ -70,7 +69,6 @@ void App::begin() {
         } while (display.nextPage());
     }
 
-    // Restore the current time after every deep-sleep wake.
     else if (timerWake || buttonWake) {
         timeManager.update();
     }
@@ -87,10 +85,8 @@ void App::begin() {
         handleButtonInput(wakeInput);
 
     } else if (timerWake) {
-        // Timer wake: update the watch face using partial refresh.
         screenManager.update();
     } else {
-        // Cold boot: full refresh.
         screenManager.draw();
     }
 }
@@ -103,8 +99,6 @@ void App::update() {
 void App::sleepUntilNextMinute() {
     display.hibernate();
 
-    // Enable the Watchy V3 32.768 kHz crystal.
-    // Do not manually switch RTC_SLOW_CLK here.
     rtc_clk_32k_enable(true);
 
     struct tm timeinfo = {};

@@ -2,12 +2,6 @@
 #include "driver/gpio.h"
 #include "esp_sleep.h"
 
-void displayBusyCallback(const void*) {
-    gpio_wakeup_enable(GPIO_NUM_36, GPIO_INTR_LOW_LEVEL);
-    esp_sleep_enable_gpio_wakeup();
-    esp_light_sleep_start();
-}
-
 GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, 200> display(
     GxEPD2_DRIVER_CLASS(33, 34, 35, 36)
 );
@@ -21,7 +15,6 @@ void Display::init() {
         SPISettings(20000000, MSBFIRST, SPI_MODE0)
     );
 
-    //display.epd2.setBusyCallback(displayBusyCallback);
 
     display.setRotation(0);
     display.setFont(&FreeMonoBold9pt7b);
