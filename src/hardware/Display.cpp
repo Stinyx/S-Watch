@@ -2,10 +2,12 @@
 #include "driver/gpio.h"
 #include "esp_sleep.h"
 
+// Display setup
 GxEPD2_DISPLAY_CLASS<GxEPD2_DRIVER_CLASS, 200> display(
     GxEPD2_DRIVER_CLASS(33, 34, 35, 36)
 );
 
+// Initialise the e-ink display
 void Display::init() {
     SPI.begin(47, 46, 48, 33);
     display.init(115200, false, 2, true);

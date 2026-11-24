@@ -4,7 +4,9 @@
 #include "esp_bt.h"
 #include "config/Debug.h"
 
-
+// Returns the current date and time via NTP through a WIFI connection
+//
+// Return value: DateTime time
 DateTime TimeManager::getDateTime() const{
   DateTime time;
 
@@ -57,16 +59,19 @@ DateTime TimeManager::getDateTime() const{
   return time;
 };
 
+// Getter for the current time
 DateTime TimeManager::getCurrentTime() const{
   DateTime time = this->currentTime;
 
   return time;
 };
 
+// Initialises the time if possible at first boot
 void TimeManager::init(){
   currentTime = getDateTime();
 };
 
+// Updates and fetches the curent time through RTC
 void TimeManager::update() {
     setenv("TZ", timeZone, 1);
     tzset();
@@ -85,6 +90,7 @@ void TimeManager::update() {
     currentTime.monthNumber = timeinfo.tm_mon + 1;
 }
 
+// Disables WIFI and Bluetooth connection
 void TimeManager::disableRadios() {
     WiFi.disconnect(true);
     WiFi.mode(WIFI_OFF);

@@ -9,6 +9,7 @@
 
 ClockScreen::ClockScreen() = default;
 
+// Draw the screen upon entering the screen
 void ClockScreen::draw() {
     display.setFullWindow();
 
@@ -24,6 +25,7 @@ void ClockScreen::draw() {
     } while (display.nextPage());
 }
 
+// Partially draws the screen
 void ClockScreen::update() {
     drawing.setPartial(15, 10, 185, 125);  // 15 50 185 135 originally for the whole stack
 
@@ -41,11 +43,12 @@ void ClockScreen::update() {
 
 }
 
+// Update the screen upon entering it
 void ClockScreen::enter() {
     timeManager.update();
 }
 
-
+// Handles the input on the current screen
 void ClockScreen::handleInput(Input input) {
     switch (input) {
         case Input::Select:

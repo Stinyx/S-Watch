@@ -6,6 +6,7 @@
 
 InfoScreen::InfoScreen() = default;
 
+// Draw the device information on the screen
 void InfoScreen::draw() {
     display.setFullWindow();
     display.firstPage();
@@ -21,6 +22,7 @@ void InfoScreen::draw() {
     } while (display.nextPage());
 }
 
+// Handle button input on current screen
 void InfoScreen::handleInput(Input input) {
     if (input == Input::Back) {
         screenManager.setScreen(mainMenuScreen);

@@ -4,6 +4,7 @@
 #include "Screens.h"
 #include "services/ScreenManager.h"
 
+// Initialise the options directly in the class constructor
 SettingsScreen::SettingsScreen(){
 
     newSelection("SETTING 1", NULL);
@@ -18,10 +19,12 @@ SettingsScreen::SettingsScreen(){
 
 }
 
+// Reset current menu selection upon entering the menu
 void SettingsScreen::enter() {
     reset();
 }
 
+// Handle the input on the current screen
 void SettingsScreen::handleInput(Input input) {
     switch (input) {
         case Input::Up:
@@ -47,7 +50,7 @@ void SettingsScreen::handleInput(Input input) {
     }
 }
 
-
+// Draw the screen upon first entering it 
 void SettingsScreen::draw() {
     display.setFullWindow();
     display.firstPage();
@@ -61,7 +64,7 @@ void SettingsScreen::draw() {
     } while (display.nextPage());
 }
 
-
+// Partially update the screen after button interactions
 void SettingsScreen::update() {
 
     drawing.setPartial(0, 40, 200, 200);

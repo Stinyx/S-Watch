@@ -16,24 +16,29 @@ public:
 class Menu : public Screen {
 public:
 
+    // Creates a new selection option for the given menu
     void newSelection(char* name, void (*callback)()) {
         this->selections.emplace_back(name, callback);
     }
 
+    // Move up the options in the menu
     void moveUp() {
         if (selections.empty()) return;
         selected = (selected + selections.size() - 1) % selections.size();
     }
 
+    // Move down the options in the menu
     void moveDown() {
         if (selections.empty()) return;
         selected = (selected + 1) % selections.size();
     }
 
+    // Reset the option selection position to zero
     void reset(){
         this->selected = 0;
     }
 
+    // Activates the callback function for the given option
     void activate() {
         if (selections.empty()) return;
 
@@ -46,18 +51,22 @@ public:
         }
     }
 
+    // Returns the count of the options
     int size(){
         return selections.size();
     }
 
+    // Returns the current index of the menu selection
     int getSelected(){
         return this->selected;
     }
 
+    // Returns the selection at a given selection index
     const Selection& getSelection(size_t index) const {
         return selections[index];
     }
 
+    // Draws the options in the current menu
     void drawMenuItems() {
         const int visibleItems = 5;
         const int lineHeight = 24;

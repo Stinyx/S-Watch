@@ -3,27 +3,33 @@
 #include "ClockStyles.h"
 #include "Images.h"
 
+// Draws a full screen image on the screen
 void Draw::drawImage(const unsigned char* image){
     display.drawXBitmap(0, 0, image, 200, 200, GxEPD_BLACK);
 }
 
+// Draws a clock seven segment digit on the screen
 void Draw::drawDigit(int x, int y, int digit, int style){
     display.drawXBitmap(x, y, clockStyles[style][digit], digit_width, digit_height, GxEPD_BLACK);
 }
 
+// Fills the given area with white on the screen
 void Draw::fill(int x, int y, int w, int h){
     display.fillRect(x, y, w, h, GxEPD_WHITE);
 }
 
+// Creates a partial window at given coordinates on the screen
 void Draw::setPartial(int x, int y, int w, int h){
     display.setPartialWindow(x, y, w, h);
 }
 
+// Draws text at given coordinates on the screen
 void Draw::drawText(char *text, int x, int y){
     display.setCursor(x, y);
     display.printf("%s", text);
 }
 
+// Draws the current time at given coordinates on the screen
 void Draw::drawTime(int x, int y, int style) {
     int digitSpacing = 5;
 
@@ -61,6 +67,7 @@ void Draw::drawTime(int x, int y, int style) {
 
 }
 
+// Draws the current battery percentage and status at given coordinates on the screen
 void Draw::drawBattery(const BatteryInfo& battery, int x, int y, bool drawVolts, bool drawUSB) {
     char buffer[48];
 
@@ -80,6 +87,7 @@ void Draw::drawBattery(const BatteryInfo& battery, int x, int y, bool drawVolts,
 
 }
 
+// Draws the current date at given coordinates on the screen
 void Draw::drawDate(int x, int y, bool drawYear) {
     DateTime currentTime = timeManager.getCurrentTime();
 

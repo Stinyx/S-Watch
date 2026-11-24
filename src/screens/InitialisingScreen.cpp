@@ -5,6 +5,7 @@
 
 InitialisingScreen::InitialisingScreen() = default;
 
+// Draw the initialising screen text and logo
 void InitialisingScreen::draw() {
     display.setFullWindow();
 

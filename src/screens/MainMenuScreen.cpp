@@ -4,6 +4,7 @@
 #include "Screens.h"
 #include "services/ScreenManager.h"
 
+// Initialise the options directly in the class constructor
 MainMenuScreen::MainMenuScreen(){
     newSelection("Watch Face", [](){
         screenManager.setScreen(clockScreen);
@@ -29,10 +30,12 @@ MainMenuScreen::MainMenuScreen(){
 
 }
 
+// Reset current menu selection upon entering the menu
 void MainMenuScreen::enter() {
     reset();
 }
 
+// Handle the input on the current screen
 void MainMenuScreen::handleInput(Input input) {
     switch (input) {
         case Input::Up:
@@ -58,7 +61,7 @@ void MainMenuScreen::handleInput(Input input) {
     }
 }
 
-
+// Draw the screen upon first entering it 
 void MainMenuScreen::draw() {
     display.setFullWindow();
     display.firstPage();
@@ -72,7 +75,7 @@ void MainMenuScreen::draw() {
     } while (display.nextPage());
 }
 
-
+// Partially update the screen after button interactions
 void MainMenuScreen::update() {
 
     drawing.setPartial(0, 40, 200, 200);

@@ -1,34 +1,35 @@
 #include "app/App.h"
 #include "graphics/Draw.h"
 #include "screens/Screens.h"
-#include "services/TimeManager.h"
-#include "services/PowerManager.h"
-#include "hardware/Button.h"
-
-#include "hardware/Display.h"
-#include "services/ScreenManager.h"
 #include "soc/rtc.h"
 
+#include "services/TimeManager.h"
+#include "services/PowerManager.h"
+#include "services/ScreenManager.h"
 
-// GRAPHICS
+#include "hardware/Button.h"
+#include "hardware/Display.h"
+
+// Graphics
 Draw drawing;
 
-// HARDWARE
-
+// Hardware
 Display displayController;
 Button buttons;
 
-// MANAGERS
+// Managers/Services
 ScreenManager screenManager;
 PowerManager powerManager;
 TimeManager timeManager;
 
+// Screens
 ClockScreen clockScreen;
 InitialisingScreen initialisingScreen;
 MainMenuScreen mainMenuScreen;
 InfoScreen infoScreen;
 SettingsScreen settingsScreen;
 
+// Timeouts
 static unsigned long lastActivity = 0;
 static constexpr unsigned long MENU_TIMEOUT = 15000;
 
@@ -40,6 +41,7 @@ static void handleButtonInput(Input input) {
     screenManager.handleInput(input);
 }
 
+// Start the firmware
 void App::begin() {
     esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
 
@@ -91,11 +93,13 @@ void App::begin() {
     }
 }
 
+// Update some parts of firmware
 void App::update() {
     timeManager.update();
     screenManager.update();
 }
 
+// Deep sleep for the clockscreen
 void App::sleepUntilNextMinute() {
     display.hibernate();
 
@@ -123,7 +127,7 @@ void App::sleepUntilNextMinute() {
     esp_deep_sleep_start();
 }
 
-
+// Firmware loop instead of periodic deepsleep for better menu button responsiveness
 void App::loop() {
     Input input = buttons.readInput();
 
